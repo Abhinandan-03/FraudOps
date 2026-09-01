@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FRAUDOPS - Incorrect Decision</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Anybody:ital,wght@0,100..900;1,100..900&amp;family=Geist:wght@100..900&amp;family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container": "#201f21",
+                        "surface-tint": "#ffb4ac",
+                        "secondary": "#e1b6ff",
+                        "surface-dim": "#131315",
+                        "on-primary-fixed": "#410002",
+                        "on-tertiary-fixed-variant": "#004f53",
+                        "primary-container": "#e21b23",
+                        "error": "#ffb4ab",
+                        "on-tertiary": "#003739",
+                        "secondary-fixed": "#f2daff",
+                        "surface-container-highest": "#353437",
+                        "secondary-fixed-dim": "#e1b6ff",
+                        "on-secondary-fixed": "#2e004e",
+                        "background": "#131315",
+                        "secondary-container": "#a20fff",
+                        "on-primary-fixed-variant": "#93000d",
+                        "inverse-surface": "#e5e1e4",
+                        "primary": "#ffb4ac",
+                        "surface-variant": "#353437",
+                        "error-container": "#93000a",
+                        "on-error": "#690005",
+                        "tertiary-fixed-dim": "#00dce5",
+                        "on-secondary-fixed-variant": "#6c00ae",
+                        "tertiary-fixed": "#63f7ff",
+                        "on-primary": "#690006",
+                        "inverse-primary": "#c00015",
+                        "on-secondary-container": "#faebff",
+                        "on-secondary": "#4c007c",
+                        "on-tertiary-container": "#eafeff",
+                        "surface-container-low": "#1c1b1d",
+                        "tertiary": "#00dce5",
+                        "outline-variant": "#5d3f3c",
+                        "surface-container-lowest": "#0e0e10",
+                        "primary-fixed-dim": "#ffb4ac",
+                        "primary-fixed": "#ffdad6",
+                        "outline": "#ae8883",
+                        "on-background": "#e5e1e4",
+                        "on-surface": "#e5e1e4",
+                        "inverse-on-surface": "#313032",
+                        "on-surface-variant": "#e7bdb8",
+                        "surface": "#131315",
+                        "on-tertiary-fixed": "#002021",
+                        "on-error-container": "#ffdad6",
+                        "surface-container-high": "#2a2a2c",
+                        "on-primary-container": "#fff8f7",
+                        "tertiary-container": "#008085",
+                        "surface-bright": "#39393b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "container-max": "1440px",
+                        "margin-desktop": "64px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Anybody", "sans-serif"],
+                        "headline-lg": ["Anybody", "sans-serif"],
+                        "label-md": ["JetBrains Mono", "monospace"],
+                        "body-lg": ["Geist", "sans-serif"],
+                        "headline-lg-mobile": ["Anybody", "sans-serif"],
+                        "label-sm": ["JetBrains Mono", "monospace"],
+                        "headline-xl": ["Anybody", "sans-serif"],
+                        "body-md": ["Geist", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["72px", { "lineHeight": "72px", "letterSpacing": "-0.04em", "fontWeight": "900" }],
+                        "headline-lg": ["32px", { "lineHeight": "36px", "fontWeight": "700" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "28px", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.08em", "fontWeight": "500" }],
+                        "headline-xl": ["48px", { "lineHeight": "52px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Cyber-Brutalism Grid Background */
+        body {
+            background-color: #0A0A0C;
+            background-image: linear-gradient(rgba(162, 15, 255, 0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(162, 15, 255, 0.05) 1px, transparent 1px);
+            background-size: 32px 32px;
+        }
+
+        /* Glitch Animation */
+        @keyframes glitch {
+            0% { transform: translate(0) }
+            20% { transform: translate(-2px, 1px) }
+            40% { transform: translate(-1px, -1px) }
+            60% { transform: translate(2px, 1px) }
+            80% { transform: translate(1px, -2px) }
+            100% { transform: translate(0) }
+        }
+        .animate-glitch:hover {
+            animation: glitch 0.2s cubic-bezier(.25, .46, .45, .94) both infinite;
+        }
+
+        /* Scanline Overlay */
+        .scanline {
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(162,15,255,0.2) 50%, rgba(0,0,0,0) 100%);
+            opacity: 0.1;
+            position: absolute;
+            bottom: 100%;
+            animation: scanline 8s linear infinite;
+        }
+        @keyframes scanline {
+            0% { bottom: 100%; }
+            100% { bottom: -100px; }
+        }
+
+        /* Prowler Stealth Button */
+        .btn-stealth {
+            border: 2px solid #6c00ae; /* on-secondary-fixed-variant */
+            background: transparent;
+            transition: all 0.3s ease;
+        }
+        .btn-stealth:hover {
+            background: linear-gradient(90deg, #a20fff, #6c00ae);
+            border-color: transparent;
+            box-shadow: 0 0 15px rgba(162, 15, 255, 0.5);
+        }
+        
+        .glow-secondary {
+            box-shadow: 0 0 30px rgba(162, 15, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="text-on-background min-h-screen flex flex-col relative overflow-hidden">
+<!-- Background Texture -->
+<div class="fixed inset-0 pointer-events-none" style="background-image: radial-gradient(circle at 50% 50%, rgba(162, 15, 255, 0.05) 0%, transparent 70%);"></div>
+<div class="scanline z-0 pointer-events-none"></div>
+<!-- Main Content Area (Nav Suppressed for Transactional/Results screen) -->
+<main class="flex-grow flex items-center justify-center p-margin-mobile md:p-margin-desktop relative z-10 w-full max-w-container-max mx-auto">
+<!-- Center Critical Alert / Result Card -->
+<div class="w-full max-w-3xl bg-surface-container/80 backdrop-blur-2xl rounded-none border border-secondary/30 p-8 md:p-12 relative overflow-hidden glow-secondary transform skew-x-[-1deg]">
+<!-- Ghost Border Accent -->
+<div class="absolute inset-0 border border-white/10 pointer-events-none"></div>
+<!-- Header Section -->
+<div class="text-center mb-10 relative">
+<div class="inline-flex items-center justify-center bg-secondary-container/20 text-secondary border border-secondary px-4 py-1 mb-6">
+<span class="material-symbols-outlined mr-2" style="font-variation-settings: 'FILL' 1;">warning</span>
+<span class="font-label-md text-label-md uppercase">Analysis Complete</span>
+</div>
+<h1 class="font-display-lg text-headline-xl md:text-display-lg text-secondary uppercase tracking-tighter mb-4 animate-glitch" style="text-shadow: 2px 2px 0 rgba(162,15,255,0.5);">
+                    INCORRECT DECISION
+                </h1>
+<div class="flex flex-col md:flex-row justify-center items-center gap-4 mt-6">
+<div class="bg-error-container/30 border border-error px-6 py-3 text-error font-headline-lg text-headline-lg-mobile md:text-headline-lg">
+                        -150 POINTS
+                    </div>
+<div class="bg-surface-dim border border-outline-variant px-6 py-3 text-on-surface-variant font-label-md text-label-md uppercase tracking-widest">
+                        STREAK RESET
+                    </div>
+</div>
+</div>
+<!-- Detail Section -->
+<div class="bg-surface-dim/90 p-6 md:p-8 border-l-4 border-error mb-10 relative">
+<div class="absolute top-0 right-0 p-2 opacity-20">
+<span class="material-symbols-outlined text-4xl">policy</span>
+</div>
+<h2 class="font-label-md text-label-md text-error uppercase tracking-widest mb-2 flex items-center">
+<span class="material-symbols-outlined text-sm mr-2">error</span>
+                    Consequence
+                </h2>
+<p class="font-body-lg text-body-lg text-on-surface mb-6">
+                    Legitimate customer blocked unnecessarily.
+                </p>
+<div class="border-t border-outline-variant/30 pt-6 mt-6">
+<h3 class="font-label-md text-label-md text-secondary uppercase tracking-widest mb-4">Post-Action Debrief</h3>
+<ul class="space-y-4">
+<li class="flex items-start">
+<span class="material-symbols-outlined text-secondary mr-3 mt-0.5" style="font-size: 20px;">check_circle</span>
+<span class="font-body-md text-body-md text-on-surface-variant">
+                                Device velocity was high, but mapped to a known corporate VPN node (IP: 192.168.*.*).
+                            </span>
+</li>
+<li class="flex items-start">
+<span class="material-symbols-outlined text-secondary mr-3 mt-0.5" style="font-size: 20px;">check_circle</span>
+<span class="font-body-md text-body-md text-on-surface-variant">
+                                Behavioral biometrics indicated standard user hesitation, not automated scripting.
+                            </span>
+</li>
+<li class="flex items-start">
+<span class="material-symbols-outlined text-secondary mr-3 mt-0.5" style="font-size: 20px;">check_circle</span>
+<span class="font-body-md text-body-md text-on-surface-variant">
+                                Historical transaction baseline aligns with this anomaly pattern during Q3 closing periods.
+                            </span>
+</li>
+</ul>
+</div>
+</div>
+<!-- CTA -->
+<div class="flex justify-center mt-8">
+<button class="btn-stealth font-label-md text-label-md uppercase tracking-widest px-10 py-4 text-on-secondary-container flex items-center gap-3 w-full md:w-auto justify-center group transform skew-x-[-2deg]">
+                    [ NEXT EVENT ]
+                    <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward_ios</span>
+</button>
+</div>
+</div>
+</main>
+</body></html>

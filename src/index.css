@@ -1,0 +1,253 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #0A0A0C;
+    background-image: radial-gradient(circle at 50% 50%, rgba(226, 27, 35, 0.05) 0%, transparent 100%),
+                      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 100% 100%, 8px 8px, 8px 8px;
+    color: #FFFFFF;
+    overflow-x: hidden;
+  }
+}
+
+@layer components {
+  /* Skewed Tech Containers */
+  .skew-container {
+    transform: skewX(-2deg);
+  }
+  
+  .unskew-content {
+    transform: skewX(2deg);
+  }
+
+  /* Specific Glowing Borders */
+  .border-glow-primary {
+    box-shadow: 0 0 10px rgba(226, 27, 35, 0.2), inset 0 0 5px rgba(226, 27, 35, 0.1);
+    border-color: #E21B23;
+  }
+  
+  .border-glow-secondary {
+    box-shadow: 0 0 10px rgba(161, 0, 255, 0.2), inset 0 0 5px rgba(161, 0, 255, 0.1);
+    border-color: #A100FF;
+  }
+
+  /* Base Card Styles */
+  .tech-card {
+    background: #131315;
+    border: 1px solid #27272A; /* border color */
+    position: relative;
+  }
+
+  /* Glitch Text Effect */
+  .text-glitch {
+    position: relative;
+    text-shadow: 2px 2px #E21B23, -2px -2px #00F5FF;
+  }
+
+  /* Custom Range Slider Thumb */
+  input[type=range].tech-slider {
+    -webkit-appearance: none;
+    background: transparent;
+    width: 100%;
+  }
+
+  input[type=range].tech-slider::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  input[type=range].tech-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 16px;
+    width: 8px;
+    background: #E21B23;
+    margin-top: -6px;
+    transform: skewX(-15deg);
+    cursor: pointer;
+  }
+}
+
+/* Animations */
+@keyframes pulse-ring {
+  0% { transform: scale(.8); opacity: .8; box-shadow: 0 0 0 0 rgba(226, 27, 35, 0.7); }
+  100% { transform: scale(1.5); opacity: 0; box-shadow: 0 0 0 50px rgba(226, 27, 35, 0); }
+}
+
+@keyframes scanline {
+  0% { top: -10%; }
+  100% { top: 110%; }
+}
+
+/* Miles Morales Hanging Animations */
+@keyframes milesDropIn {
+  0% {
+    transform: translateY(-130%) rotate(6deg);
+    opacity: 0;
+  }
+  65% {
+    transform: translateY(12px) rotate(-5deg);
+    opacity: 1;
+  }
+  85% {
+    transform: translateY(-6px) rotate(3deg);
+  }
+  100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes milesNaturalSwing {
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(4px) rotate(-3.5deg);
+  }
+  50% {
+    transform: translateY(0) rotate(0deg);
+  }
+  75% {
+    transform: translateY(3px) rotate(3deg);
+  }
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+}
+
+@keyframes milesZipOut {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  30% {
+    transform: translateY(15px) rotate(-4deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-140%) rotate(8deg);
+    opacity: 0;
+  }
+}
+
+.miles-hanging-enter {
+  animation: milesDropIn 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.miles-hanging-swing {
+  animation: milesNaturalSwing 2.2s ease-in-out infinite;
+}
+
+.miles-hanging-exit {
+  animation: milesZipOut 0.45s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards;
+}
+
+/* Spider Swarm Failure Animations */
+@keyframes spiderDrop {
+  0% {
+    transform: translateY(-130%);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(8px);
+    opacity: 1;
+  }
+  80% {
+    transform: translateY(-4px);
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes spiderTwitch {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  25% { transform: scale(1.04) rotate(-3deg); }
+  50% { transform: scale(0.98) rotate(2deg); }
+  75% { transform: scale(1.02) rotate(-1deg); }
+}
+
+@keyframes spiderScurry {
+  0% {
+    opacity: 0;
+    transform: translate(var(--start-x, 0), var(--start-y, 0)) scale(var(--scale, 1)) rotate(var(--rot, 0deg));
+  }
+  20% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+    transform: translate(var(--mid-x, 0), var(--mid-y, 0)) scale(var(--scale, 1)) rotate(calc(var(--rot, 0deg) + 5deg));
+  }
+  100% {
+    opacity: 0.9;
+    transform: translate(var(--end-x, 0), var(--end-y, 0)) scale(var(--scale, 1)) rotate(var(--rot, 0deg));
+  }
+}
+
+@keyframes prowlerVignette {
+  0% { opacity: 0; }
+  20% { opacity: 0.7; }
+  85% { opacity: 0.85; }
+  100% { opacity: 0; }
+}
+
+.spider-primary-drop {
+  animation: spiderDrop 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.spider-twitch {
+  animation: spiderTwitch 1.8s ease-in-out infinite;
+}
+
+.spider-scurry-item {
+  animation: spiderScurry var(--anim-dur, 1.2s) cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  animation-delay: var(--anim-delay, 0s);
+}
+
+.prowler-overlay-dim {
+  animation: prowlerVignette var(--total-dur, 3.5s) ease-in-out forwards;
+}
+
+/* Accessibility: Respect Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .miles-hanging-enter, .spider-primary-drop {
+    animation: fadeIn 0.3s ease-out forwards;
+    transform: translateY(0) !important;
+  }
+  .miles-hanging-swing, .spider-twitch {
+    animation: none !important;
+    transform: translateY(0) !important;
+  }
+  .miles-hanging-exit {
+    animation: fadeOut 0.3s ease-in forwards;
+  }
+  .spider-scurry-item {
+    animation: fadeIn 0.4s ease-out forwards !important;
+    transform: translate(var(--end-x, 0), var(--end-y, 0)) scale(var(--scale, 1)) !important;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #E21B23;
+}

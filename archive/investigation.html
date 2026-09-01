@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Investigation Workspace - FRAUDOPS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Anybody:ital,wght@0,100..900;1,100..900&amp;family=Geist:wght@100..900&amp;family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container": "#201f21",
+                        "surface-tint": "#ffb4ac",
+                        "secondary": "#e1b6ff",
+                        "surface-dim": "#131315",
+                        "on-primary-fixed": "#410002",
+                        "on-tertiary-fixed-variant": "#004f53",
+                        "primary-container": "#e21b23",
+                        "error": "#ffb4ab",
+                        "on-tertiary": "#003739",
+                        "secondary-fixed": "#f2daff",
+                        "surface-container-highest": "#353437",
+                        "secondary-fixed-dim": "#e1b6ff",
+                        "on-secondary-fixed": "#2e004e",
+                        "background": "#131315",
+                        "secondary-container": "#a20fff",
+                        "on-primary-fixed-variant": "#93000d",
+                        "inverse-surface": "#e5e1e4",
+                        "primary": "#ffb4ac",
+                        "surface-variant": "#353437",
+                        "error-container": "#93000a",
+                        "on-error": "#690005",
+                        "tertiary-fixed-dim": "#00dce5",
+                        "on-secondary-fixed-variant": "#6c00ae",
+                        "tertiary-fixed": "#63f7ff",
+                        "on-primary": "#690006",
+                        "inverse-primary": "#c00015",
+                        "on-secondary-container": "#faebff",
+                        "on-secondary": "#4c007c",
+                        "on-tertiary-container": "#eafeff",
+                        "surface-container-low": "#1c1b1d",
+                        "tertiary": "#00dce5",
+                        "outline-variant": "#5d3f3c",
+                        "surface-container-lowest": "#0e0e10",
+                        "primary-fixed-dim": "#ffb4ac",
+                        "primary-fixed": "#ffdad6",
+                        "outline": "#ae8883",
+                        "on-background": "#e5e1e4",
+                        "on-surface": "#e5e1e4",
+                        "inverse-on-surface": "#313032",
+                        "on-surface-variant": "#e7bdb8",
+                        "surface": "#131315",
+                        "on-tertiary-fixed": "#002021",
+                        "on-error-container": "#ffdad6",
+                        "surface-container-high": "#2a2a2c",
+                        "on-primary-container": "#fff8f7",
+                        "tertiary-container": "#008085",
+                        "surface-bright": "#39393b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "container-max": "1440px",
+                        "margin-desktop": "64px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["anybody"],
+                        "headline-lg": ["anybody"],
+                        "label-md": ["jetbrainsMono"],
+                        "body-lg": ["geist"],
+                        "headline-lg-mobile": ["anybody"],
+                        "label-sm": ["jetbrainsMono"],
+                        "headline-xl": ["anybody"],
+                        "body-md": ["geist"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["72px", { "lineHeight": "72px", "letterSpacing": "-0.04em", "fontWeight": "900" }],
+                        "headline-lg": ["32px", { "lineHeight": "36px", "fontWeight": "700" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "28px", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.08em", "fontWeight": "500" }],
+                        "headline-xl": ["48px", { "lineHeight": "52px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #0A0A0C;
+            background-image: radial-gradient(#1c1b1d 1px, transparent 1px);
+            background-size: 8px 8px;
+            color: #e5e1e4;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+        .cyber-glitch:hover {
+            animation: glitch-anim 0.2s cubic-bezier(.25, .46, .45, .94) both infinite;
+            box-shadow: 0 0 15px rgba(162, 15, 255, 0.6);
+        }
+        @keyframes glitch-anim {
+            0% { transform: translate(0) }
+            20% { transform: translate(-2px, 2px) }
+            40% { transform: translate(-2px, -2px) }
+            60% { transform: translate(2px, 2px) }
+            80% { transform: translate(2px, -2px) }
+            100% { transform: translate(0) }
+        }
+        .ghost-border {
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .scanline {
+            width: 100%;
+            height: 100px;
+            z-index: 10;
+            position: absolute;
+            pointer-events: none;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(162, 15, 255, 0.2) 50%, rgba(255,255,255,0));
+            opacity: 0.1;
+            animation: scanline 6s linear infinite;
+        }
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100vh); }
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(162, 15, 255, 0.4); }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(162, 15, 255, 0.8); }
+    </style>
+</head>
+<body class="font-body-md relative">
+<div class="scanline"></div>
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 bg-surface-container/70 dark:bg-surface-container-low/70 backdrop-blur-xl border-b border-outline-variant/10 shadow-[0_0_20px_rgba(226,27,35,0.15)] z-50">
+<div class="flex items-center gap-4">
+<span class="font-display-lg text-display-lg-mobile text-primary-container tracking-tighter uppercase italic">FRAUDOPS</span>
+</div>
+<div class="flex items-center gap-6 text-on-surface-variant">
+<span class="material-symbols-outlined hover:bg-primary/10 transition-all duration-150 active:skew-x-[-2deg] cursor-pointer p-2 rounded">query_stats</span>
+<span class="material-symbols-outlined hover:bg-primary/10 transition-all duration-150 active:skew-x-[-2deg] cursor-pointer p-2 rounded">stadium</span>
+<span class="material-symbols-outlined hover:bg-primary/10 transition-all duration-150 active:skew-x-[-2deg] cursor-pointer p-2 rounded">account_balance_wallet</span>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant">
+<img alt="Operator Profile" class="w-full h-full object-cover" data-alt="A futuristic headshot of an elite cyber operator with glowing magenta neuro-implants against a dark neon grid background, sharp cyberpunk styling." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWOp5W4gKHvyitaiJ7MyA7DQuXZRNtBcMU-0upUM176lkFKSaqnXf8Ci5X3x6VOdMipA-Qg2pMEVqZ5Cd8o69LZFWyeIS5FPkKq788Q8lWKDdTHHmO487gRHvtfxHgDr-7bIaVaFM9yNBGS79KPNlnbxlVNSHfAncCeh7rd4SyEBBu-St9I-2kUrsjqanHZ4o7WqGtucJZrPeOu_D53KTvhywbM4YgUtp7YIp-8XCt1o2mCzJE4l4T0A"/>
+</div>
+</div>
+</nav>
+<div class="flex flex-1 pt-16 h-screen overflow-hidden">
+<!-- SideNavBar -->
+<aside class="hidden md:flex flex-col justify-between py-6 bg-surface-dim/80 dark:bg-surface-dim/80 backdrop-blur-2xl border-r border-outline-variant/10 shadow-xl fixed left-0 top-16 h-[calc(100vh-64px)] w-64 z-40">
+<div>
+<div class="px-6 mb-8 flex items-center gap-4">
+<div class="w-10 h-10 rounded-sm bg-surface-container-highest border border-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary">computer</span>
+</div>
+<div>
+<div class="font-headline-lg text-headline-lg-mobile text-secondary leading-none">NODE_01</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant tracking-widest mt-1">OPERATIONAL</div>
+</div>
+</div>
+<nav class="flex flex-col gap-2 px-4">
+<a class="flex items-center gap-3 px-4 py-3 rounded text-on-surface-variant hover:bg-surface-variant/20 hover:translate-x-1 hover:text-secondary transition-all active:scale-95 duration-75" href="#">
+<span class="material-symbols-outlined">radar</span>
+<span class="font-label-md text-label-md">Live Stream</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded bg-secondary-container text-on-secondary-container border-l-4 border-secondary font-bold active:scale-95 duration-75" href="#">
+<span class="material-symbols-outlined">query_stats</span>
+<span class="font-label-md text-label-md">Analysis</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded text-on-surface-variant hover:bg-surface-variant/20 hover:translate-x-1 hover:text-secondary transition-all active:scale-95 duration-75" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label-md text-label-md">Archive</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded text-on-surface-variant hover:bg-surface-variant/20 hover:translate-x-1 hover:text-secondary transition-all active:scale-95 duration-75" href="#">
+<span class="material-symbols-outlined">hub</span>
+<span class="font-label-md text-label-md">Network</span>
+</a>
+</nav>
+</div>
+<div class="px-4">
+<button class="w-full py-3 mb-4 bg-transparent border-2 border-secondary text-secondary font-label-md text-label-md rounded uppercase tracking-wider hover:bg-gradient-to-r hover:from-secondary-container hover:to-secondary hover:text-on-secondary hover:border-transparent transition-all cyber-glitch">
+                    DEPLOY COUNTERMEASURE
+                </button>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-4 py-2 rounded text-on-surface-variant hover:text-secondary transition-colors" href="#">
+<span class="material-symbols-outlined text-sm">settings</span>
+<span class="font-label-sm text-label-sm">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 rounded text-on-surface-variant hover:text-secondary transition-colors" href="#">
+<span class="material-symbols-outlined text-sm">help</span>
+<span class="font-label-sm text-label-sm">Support</span>
+</a>
+</nav>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 md:ml-64 p-gutter overflow-hidden flex flex-col gap-gutter">
+<header class="flex justify-between items-end pb-4 border-b border-outline-variant/20">
+<div>
+<h1 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface uppercase tracking-tight">Investigation Workspace</h1>
+<p class="font-label-md text-label-md text-on-surface-variant/60 mt-1">SESSION ID: <span class="text-secondary font-mono">0x7F9A2B</span></p>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-2 py-1 bg-error-container text-on-error-container font-label-sm text-label-sm rounded uppercase border border-error">CRITICAL THREAT LEVEL</span>
+</div>
+</header>
+<div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-gutter overflow-hidden pb-20">
+<!-- Left: Transaction Evidence -->
+<section class="lg:col-span-3 flex flex-col gap-4 overflow-hidden">
+<div class="bg-surface-container/80 backdrop-blur-xl ghost-border rounded-lg p-4 flex flex-col h-full">
+<h2 class="font-label-md text-label-md text-on-surface uppercase border-b border-outline-variant/30 pb-2 mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-sm">receipt_long</span>
+                            Transaction Evidence
+                        </h2>
+<div class="flex-1 overflow-y-auto custom-scrollbar pr-2 flex flex-col gap-3">
+<!-- Items -->
+<div class="p-3 bg-surface-container-low border border-outline-variant/20 rounded hover:bg-secondary/10 transition-colors cursor-pointer group">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-md text-label-md text-on-surface group-hover:text-secondary">$12,450.00</span>
+<span class="font-label-sm text-label-sm text-error">HIGH RISK</span>
+</div>
+<div class="grid grid-cols-2 gap-y-1 font-label-sm text-label-sm text-on-surface-variant/70">
+<span>IP: <span class="text-on-surface">192.168.1.45</span></span>
+<span class="text-right">LOC: <span class="text-on-surface">RU-MSK</span></span>
+<span class="col-span-2">DEV: <span class="text-on-surface">iPhone14,3 (Spoofed)</span></span>
+</div>
+</div>
+<div class="p-3 bg-surface-container-low border border-outline-variant/20 rounded hover:bg-secondary/10 transition-colors cursor-pointer group">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-md text-label-md text-on-surface group-hover:text-secondary">$8,900.50</span>
+<span class="font-label-sm text-label-sm text-error">HIGH RISK</span>
+</div>
+<div class="grid grid-cols-2 gap-y-1 font-label-sm text-label-sm text-on-surface-variant/70">
+<span>IP: <span class="text-on-surface">10.0.0.99</span></span>
+<span class="text-right">LOC: <span class="text-on-surface">CN-BJ</span></span>
+<span class="col-span-2">DEV: <span class="text-on-surface">Chrome/Win10</span></span>
+</div>
+</div>
+<div class="p-3 bg-surface-container-low border border-outline-variant/20 rounded hover:bg-secondary/10 transition-colors cursor-pointer group">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-md text-label-md text-on-surface group-hover:text-secondary">$45.00</span>
+<span class="font-label-sm text-label-sm text-tertiary">PROBE</span>
+</div>
+<div class="grid grid-cols-2 gap-y-1 font-label-sm text-label-sm text-on-surface-variant/70">
+<span>IP: <span class="text-on-surface">192.168.1.45</span></span>
+<span class="text-right">LOC: <span class="text-on-surface">RU-MSK</span></span>
+<span class="col-span-2">DEV: <span class="text-on-surface">Unknown Android</span></span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Center: Network Vis -->
+<section class="lg:col-span-6 flex flex-col gap-4 overflow-hidden relative">
+<div class="bg-surface-container-lowest border border-secondary/30 rounded-lg h-full relative overflow-hidden flex flex-col">
+<div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDQwIEwgNDAgNDAgNDAgMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDE2MiwgMTUsIDI1NSwgMC4xKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-50 z-0"></div>
+<div class="absolute top-4 left-4 z-10">
+<h2 class="font-label-md text-label-md text-secondary uppercase flex items-center gap-2 bg-surface-container/80 px-3 py-1 rounded backdrop-blur">
+<span class="material-symbols-outlined text-sm">hub</span>
+                                Entity Graph
+                            </h2>
+</div>
+<div class="flex-1 w-full h-full relative z-0 flex items-center justify-center">
+<!-- Placeholder for complex graph visualization, styled with neon lines -->
+<svg class="w-full h-full" preserveaspectratio="xMidYMid meet" viewbox="0 0 800 600">
+<!-- Edges -->
+<path d="M400,300 L250,150" fill="none" opacity="0.6" stroke="#a20fff" stroke-dasharray="5,5" stroke-width="2"></path>
+<path d="M400,300 L550,200" fill="none" opacity="0.8" stroke="#e21b23" stroke-width="3"></path>
+<path d="M400,300 L300,450" fill="none" opacity="0.5" stroke="#00dce5" stroke-width="1"></path>
+<path d="M550,200 L650,350" fill="none" opacity="0.7" stroke="#e21b23" stroke-width="2"></path>
+<!-- Nodes -->
+<circle cx="400" cy="300" fill="#201f21" r="25" stroke="#e1b6ff" stroke-width="3" style="filter: drop-shadow(0 0 10px rgba(225,182,255,0.5))"></circle>
+<text fill="#e1b6ff" font-family="monospace" font-size="10" text-anchor="middle" x="400" y="305">TARGET</text>
+<circle cx="250" cy="150" fill="#201f21" r="15" stroke="#00dce5" stroke-width="2"></circle>
+<text fill="#00dce5" font-family="monospace" font-size="10" text-anchor="middle" x="250" y="180">DEVICE_A</text>
+<circle cx="550" cy="200" fill="#201f21" r="20" stroke="#ffb4ac" stroke-width="3" style="filter: drop-shadow(0 0 8px rgba(255,180,172,0.8))"></circle>
+<text fill="#ffb4ac" font-family="monospace" font-size="10" text-anchor="middle" x="550" y="235">ACCT_992</text>
+<circle cx="300" cy="450" fill="#201f21" r="12" stroke="#00dce5" stroke-width="1"></circle>
+<text fill="#00dce5" font-family="monospace" font-size="10" text-anchor="middle" x="300" y="475">IP_NODE</text>
+<circle cx="650" cy="350" fill="#201f21" r="18" stroke="#ffb4ac" stroke-width="2"></circle>
+<text fill="#ffb4ac" font-family="monospace" font-size="10" text-anchor="middle" x="650" y="385">ACCT_114</text>
+</svg>
+</div>
+</div>
+</section>
+<!-- Right: Detection Evidence -->
+<section class="lg:col-span-3 flex flex-col gap-4 overflow-hidden">
+<div class="bg-surface-container/80 backdrop-blur-xl ghost-border rounded-lg p-4 flex flex-col h-full">
+<h2 class="font-label-md text-label-md text-on-surface uppercase border-b border-outline-variant/30 pb-2 mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-sm">warning</span>
+                            Detection Signals
+                        </h2>
+<div class="flex-1 overflow-y-auto custom-scrollbar pr-2 flex flex-col gap-6">
+<!-- Rule-based -->
+<div>
+<div class="flex justify-between font-label-sm text-label-sm mb-2">
+<span class="text-on-surface">Rule-Based Velocity</span>
+<span class="text-error font-bold">98%</span>
+</div>
+<div class="h-2 w-full bg-surface-container-highest rounded-full overflow-hidden border border-outline-variant/20">
+<div class="h-full bg-error" style="width: 98%; box-shadow: 0 0 8px #ffb4ab;"></div>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant/50 mt-1">High frequency xfers to new payees.</p>
+</div>
+<!-- Behavioral -->
+<div>
+<div class="flex justify-between font-label-sm text-label-sm mb-2">
+<span class="text-on-surface">Biometric Anomaly</span>
+<span class="text-secondary font-bold">85%</span>
+</div>
+<div class="h-2 w-full bg-surface-container-highest rounded-full overflow-hidden border border-outline-variant/20">
+<div class="h-full bg-secondary" style="width: 85%; box-shadow: 0 0 8px #e1b6ff;"></div>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant/50 mt-1">Typing cadence mismatch detected.</p>
+</div>
+<!-- Graph -->
+<div>
+<div class="flex justify-between font-label-sm text-label-sm mb-2">
+<span class="text-on-surface">Graph Distance</span>
+<span class="text-tertiary font-bold">42%</span>
+</div>
+<div class="h-2 w-full bg-surface-container-highest rounded-full overflow-hidden border border-outline-variant/20">
+<div class="h-full bg-tertiary" style="width: 42%;"></div>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant/50 mt-1">2 hops from known bad actor.</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Bottom: Response Panel (Absolute positioned at bottom of main area) -->
+<section class="absolute bottom-10 left-64 right-0 px-gutter z-20">
+<div class="bg-surface-container-high/95 backdrop-blur-xl border border-secondary/40 shadow-[0_-5px_30px_rgba(162,15,255,0.1)] rounded-lg p-4 -skew-x-[1deg]">
+<div class="flex flex-wrap gap-4 justify-between items-stretch">
+<button class="flex-1 min-w-[200px] flex flex-col items-center justify-center p-3 border-2 border-outline-variant/50 rounded bg-transparent text-on-surface hover:border-tertiary hover:bg-tertiary/10 transition-all group">
+<span class="font-headline-lg-mobile text-headline-lg-mobile uppercase group-hover:text-tertiary">CLEAR</span>
+<span class="font-label-sm text-label-sm text-center text-on-surface-variant/70 mt-1">Mark as false positive. Release holds.</span>
+</button>
+<button class="flex-1 min-w-[200px] flex flex-col items-center justify-center p-3 border-2 border-secondary rounded bg-transparent text-secondary hover:bg-gradient-to-t hover:from-secondary-container hover:to-transparent transition-all group">
+<span class="font-headline-lg-mobile text-headline-lg-mobile uppercase group-hover:drop-shadow-[0_0_8px_rgba(225,182,255,0.8)]">STEP-UP AUTH</span>
+<span class="font-label-sm text-label-sm text-center text-on-surface-variant/70 mt-1">Trigger SMS/Email verification loop.</span>
+</button>
+<button class="flex-1 min-w-[200px] flex flex-col items-center justify-center p-3 bg-primary-container text-on-primary-container rounded border-2 border-transparent hover:border-primary hover:shadow-[0_0_15px_rgba(255,180,172,0.4)] transition-all cyber-glitch group">
+<span class="font-headline-lg-mobile text-headline-lg-mobile uppercase">FREEZE</span>
+<span class="font-label-sm text-label-sm text-center opacity-80 mt-1">Immediate halt on all account activity.</span>
+</button>
+<button class="flex-1 min-w-[200px] flex flex-col items-center justify-center p-3 border-2 border-error-container bg-error-container/20 text-error rounded hover:bg-error-container hover:text-on-error-container transition-all group">
+<span class="font-headline-lg-mobile text-headline-lg-mobile uppercase">ESCALATE</span>
+<span class="font-label-sm text-label-sm text-center opacity-80 mt-1">Route to L3 Manual Review Queue.</span>
+</button>
+</div>
+</div>
+</section>
+</main>
+</div>
+<!-- Footer -->
+<footer class="fixed bottom-0 w-full flex items-center justify-between px-margin-mobile md:px-margin-desktop bg-surface-container-lowest/90 backdrop-blur-md border-t border-outline-variant/20 h-10 z-50">
+<span class="font-label-sm text-label-sm text-on-surface-variant/60 uppercase tracking-widest">FRAUDOPS SYSTEM v2.4.0</span>
+<div class="flex gap-6">
+<a class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant/60 hover:text-tertiary transition-colors" href="#">Session Data</a>
+<a class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant/60 hover:text-tertiary transition-colors" href="#">Network Latency</a>
+<a class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant/60 hover:text-tertiary transition-colors" href="#">Privacy Protocol</a>
+</div>
+</footer>
+</body></html>

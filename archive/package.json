@@ -1,0 +1,13 @@
+{
+  "name": "fraudops-frontend",
+  "version": "1.0.0",
+  "description": "FRAUDOPS - Real-Time Fraud Operations Simulator",
+  "main": "index.html",
+  "scripts": {
+    "start": "serve .",
+    "dev": "serve ."
+  },
+  "devDependencies": {
+    "serve": "^14.2.1"
+  }
+}

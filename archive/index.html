@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FRAUDOPS - Real-Time Fraud Operations Simulator</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Anybody:ital,wght@0,100..900;1,100..900&amp;family=Geist:wght@100..900&amp;family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container": "#201f21",
+                        "surface-tint": "#ffb4ac",
+                        "secondary": "#e1b6ff",
+                        "surface-dim": "#131315",
+                        "on-primary-fixed": "#410002",
+                        "on-tertiary-fixed-variant": "#004f53",
+                        "primary-container": "#e21b23",
+                        "error": "#ffb4ab",
+                        "on-tertiary": "#003739",
+                        "secondary-fixed": "#f2daff",
+                        "surface-container-highest": "#353437",
+                        "secondary-fixed-dim": "#e1b6ff",
+                        "on-secondary-fixed": "#2e004e",
+                        "background": "#131315",
+                        "secondary-container": "#a20fff",
+                        "on-primary-fixed-variant": "#93000d",
+                        "inverse-surface": "#e5e1e4",
+                        "primary": "#ffb4ac",
+                        "surface-variant": "#353437",
+                        "error-container": "#93000a",
+                        "on-error": "#690005",
+                        "tertiary-fixed-dim": "#00dce5",
+                        "on-secondary-fixed-variant": "#6c00ae",
+                        "tertiary-fixed": "#63f7ff",
+                        "on-primary": "#690006",
+                        "inverse-primary": "#c00015",
+                        "on-secondary-container": "#faebff",
+                        "on-secondary": "#4c007c",
+                        "on-tertiary-container": "#eafeff",
+                        "surface-container-low": "#1c1b1d",
+                        "tertiary": "#00dce5",
+                        "outline-variant": "#5d3f3c",
+                        "surface-container-lowest": "#0e0e10",
+                        "primary-fixed-dim": "#ffb4ac",
+                        "primary-fixed": "#ffdad6",
+                        "outline": "#ae8883",
+                        "on-background": "#e5e1e4",
+                        "on-surface": "#e5e1e4",
+                        "inverse-on-surface": "#313032",
+                        "on-surface-variant": "#e7bdb8",
+                        "surface": "#131315",
+                        "on-tertiary-fixed": "#002021",
+                        "on-error-container": "#ffdad6",
+                        "surface-container-high": "#2a2a2c",
+                        "on-primary-container": "#fff8f7",
+                        "tertiary-container": "#008085",
+                        "surface-bright": "#39393b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "container-max": "1440px",
+                        "margin-desktop": "64px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Anybody"],
+                        "headline-lg": ["Anybody"],
+                        "label-md": ["JetBrains Mono"],
+                        "body-lg": ["Geist"],
+                        "headline-lg-mobile": ["Anybody"],
+                        "label-sm": ["JetBrains Mono"],
+                        "headline-xl": ["Anybody"],
+                        "body-md": ["Geist"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["72px", { "lineHeight": "72px", "letterSpacing": "-0.04em", "fontWeight": "900" }],
+                        "headline-lg": ["32px", { "lineHeight": "36px", "fontWeight": "700" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "28px", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.08em", "fontWeight": "500" }],
+                        "headline-xl": ["48px", { "lineHeight": "52px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .glitch-text {
+            position: relative;
+            color: #ffb4ac;
+            text-shadow: 2px 2px #e21b23, -2px -2px #00dce5;
+            animation: glitch 2s infinite;
+        }
+        @keyframes glitch {
+            0% { text-shadow: 2px 2px #e21b23, -2px -2px #00dce5; transform: translate(0); }
+            10% { text-shadow: -2px -2px #e21b23, 2px 2px #00dce5; transform: translate(-2px, 2px); }
+            20% { text-shadow: 2px -2px #e21b23, -2px 2px #00dce5; transform: translate(2px, -2px); }
+            30% { text-shadow: -2px 2px #e21b23, 2px -2px #00dce5; transform: translate(-2px, -2px); }
+            40% { text-shadow: 2px 2px #e21b23, -2px -2px #00dce5; transform: translate(2px, 2px); }
+            50% { text-shadow: -2px -2px #e21b23, 2px 2px #00dce5; transform: translate(0); }
+            100% { text-shadow: 2px 2px #e21b23, -2px -2px #00dce5; transform: translate(0); }
+        }
+        .wireframe-bg {
+            background-image: linear-gradient(rgba(226, 27, 35, 0.05) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(226, 27, 35, 0.05) 1px, transparent 1px);
+            background-size: 32px 32px;
+        }
+        .comic-card {
+            border: 2px solid #5d3f3c;
+            transform: skewX(-2deg);
+            transition: all 0.3s ease;
+        }
+        .comic-card:hover {
+            transform: skewX(-2deg) translateY(-8px);
+            box-shadow: -8px 8px 0px #e21b23;
+            border-color: #e21b23;
+        }
+        .glitch-btn {
+            position: relative;
+            overflow: hidden;
+        }
+        .glitch-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 220, 229, 0.4), transparent);
+            transition: all 0.5s ease;
+        }
+        .glitch-btn:hover::before {
+            left: 100%;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md overflow-x-hidden min-h-screen">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 bg-surface-container/70 dark:bg-surface-container-low/70 backdrop-blur-xl border-b border-outline-variant/10 shadow-[0_0_20px_rgba(226,27,35,0.15)] docked full-width top-0 z-50">
+<div class="flex items-center gap-gutter">
+<span class="font-display-lg text-display-lg-mobile text-primary-container tracking-tighter uppercase italic">FRAUDOPS</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4 hidden md:flex">
+<button class="text-on-surface-variant hover:bg-primary/10 transition-all duration-150 p-2 rounded active:skew-x-[-2deg] transition-transform flex items-center justify-center">
+<span class="material-symbols-outlined">query_stats</span>
+</button>
+<button class="text-on-surface-variant hover:bg-primary/10 transition-all duration-150 p-2 rounded active:skew-x-[-2deg] transition-transform flex items-center justify-center">
+<span class="material-symbols-outlined">stadium</span>
+</button>
+<button class="text-on-surface-variant hover:bg-primary/10 transition-all duration-150 p-2 rounded active:skew-x-[-2deg] transition-transform flex items-center justify-center">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+</button>
+</div>
+<div class="w-10 h-10 rounded-full border border-outline-variant/30 overflow-hidden relative">
+<img alt="Operator Profile" class="w-full h-full object-cover grayscale opacity-80" data-alt="A gritty, cyberpunk-style avatar of a system operator. The image is a silhouette set against a dark background with subtle neon red and teal highlights. The style is comic-book noir, high contrast, and cinematic, fitting a high-stakes financial operations dashboard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3VKLv5oh9ahWn2egMexOpY4Ptl-MEdstvnZFrgujymZkPM-SUZ4ZzWPU4_DhIY08X5QlXQzo46JDvc7waWNL0PGsb16C09gej4MAl0n-xAs72HPcG3vcSLuzavZq0kdIi1Sl8CwgAbLqp-XXSl7WAZzs7JQuYLBCFG0WEjL1TG0dUMjhe6QB9W0AxS69uVc1ehAUlDtulb-dEERqbSJs_CbDwO7M27nOsk4FwwXp7Z1XEFm4CvvZdRA"/>
+</div>
+</div>
+</nav>
+<!-- Hero Section -->
+<section class="relative min-h-[921px] flex items-center pt-24 px-margin-mobile md:px-margin-desktop wireframe-bg overflow-hidden">
+<!-- Skyline Background -->
+<div class="absolute inset-0 z-0 opacity-20 pointer-events-none" data-alt="A stylized dark NYC skyline at night. The image is rendered in a cyber-brutalism style with halftone textures. Buildings are stark silhouettes against a deeply dark, almost black sky. Subtle, high-intensity red neon streaks cut through the composition, giving it a kinetic, comic-book feel." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC3HVmfPSZBfqo6_mh6GND7OAGPEaY6kP2Vdji4YUk2-ZL8zSLyIX_5thHmu7QP7MnWd1MxNd4ygbj6je0Zd6KEnCV86ALzjIN0OgmjIcPiixvk_cudfsqqkLtR6CC6DrhkGCFwNDDNhpqTvTuo5NXnpXLicMK_W_FRaaR-2tCvcm-x4vE2Y34_KR2u0zt9VBO-AR0QGg_1bpf6xiWqJXreVQs8zB5qfuA3KhVag1bT2B1Kc_SfqLQgWg')"></div>
+<!-- Subtle Halftone Overlay -->
+<div class="absolute inset-0 z-0 bg-[radial-gradient(#e5e1e4_1px,transparent_1px)] [background-size:16px_16px] opacity-[0.03] pointer-events-none"></div>
+<div class="relative z-10 max-w-container-max mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<div class="col-span-1 md:col-span-8 flex flex-col justify-center items-start">
+<h2 class="font-label-md text-label-md text-tertiary uppercase tracking-widest mb-4 bg-surface-container px-3 py-1 border border-outline-variant/30 inline-block">REAL-TIME FRAUD OPERATIONS SIMULATOR</h2>
+<h1 class="font-display-lg text-display-lg-mobile md:text-[96px] md:leading-[96px] tracking-tighter uppercase italic glitch-text mb-6">
+                    FRAUDOPS
+                </h1>
+<p class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface-variant max-w-2xl mb-10 leading-relaxed border-l-4 border-primary-container pl-6">
+                    Detect. Explain. Respond. Measure.
+                </p>
+<div class="flex flex-col sm:flex-row gap-6">
+<button class="glitch-btn bg-primary-container text-on-primary-container font-headline-lg text-headline-lg-mobile uppercase px-8 py-4 rounded-none hover:shadow-[0_0_30px_rgba(226,27,35,0.4)] transition-all flex items-center justify-center gap-3">
+                        [ ENTER THE OPS ]
+                        <span class="material-symbols-outlined">terminal</span>
+</button>
+<button class="border-2 border-secondary-container text-secondary font-headline-lg text-headline-lg-mobile uppercase px-8 py-4 rounded-none hover:bg-secondary-container hover:text-on-secondary-container transition-all flex items-center justify-center gap-3">
+                        [ HOW IT WORKS ]
+                        <span class="material-symbols-outlined">visibility</span>
+</button>
+</div>
+</div>
+<div class="col-span-1 md:col-span-4 hidden md:flex items-center justify-center relative">
+<!-- Abstract UI element -->
+<div class="w-full aspect-square border border-outline-variant/20 relative p-8 backdrop-blur-md bg-surface-container/30 transform skew-x-[-2deg]">
+<div class="absolute inset-0 border border-primary-container/20 m-4 animate-pulse"></div>
+<div class="h-full flex flex-col justify-between">
+<div class="font-label-sm text-label-sm text-tertiary">SYS.STATUS: <span class="text-primary">CRITICAL</span></div>
+<div class="space-y-2">
+<div class="h-2 w-full bg-surface-container-highest overflow-hidden">
+<div class="h-full bg-primary-container w-[87%]"></div>
+</div>
+<div class="h-2 w-full bg-surface-container-highest overflow-hidden">
+<div class="h-full bg-secondary w-[42%]"></div>
+</div>
+<div class="h-2 w-full bg-surface-container-highest overflow-hidden">
+<div class="h-full bg-tertiary w-[95%]"></div>
+</div>
+</div>
+<div class="text-right font-label-md text-label-md text-on-surface-variant">NODE_A1.ACTIVE</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Features Loop Section -->
+<section class="py-24 px-margin-mobile md:px-margin-desktop bg-surface-container-lowest relative z-10">
+<div class="max-w-container-max mx-auto">
+<div class="flex items-center gap-4 mb-16">
+<div class="w-12 h-1 bg-primary-container"></div>
+<h3 class="font-headline-xl text-headline-lg-mobile md:text-headline-xl uppercase tracking-tight">The Operations Loop</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+<!-- Detect -->
+<div class="comic-card bg-surface-container/60 backdrop-blur-lg p-8 flex flex-col group">
+<div class="flex justify-between items-start mb-6">
+<span class="font-display-lg text-[48px] text-surface-variant group-hover:text-primary-container transition-colors font-black italic">01</span>
+<span class="material-symbols-outlined text-tertiary text-3xl group-hover:animate-pulse">radar</span>
+</div>
+<h4 class="font-headline-lg text-headline-lg-mobile uppercase mb-4 text-on-surface">Detect</h4>
+<p class="font-body-md text-on-surface-variant mb-6 flex-grow">Identify anomalies in real-time transaction streams with sub-millisecond latency.</p>
+<div class="h-32 w-full bg-surface-dim relative overflow-hidden border border-outline-variant/30 mt-auto">
+<div class="absolute inset-0 bg-cover bg-center opacity-40 mix-blend-screen group-hover:opacity-80 transition-opacity" data-alt="A highly stylized, cyberpunk vector illustration of an eye or radar sweep composed of glowing geometric lines. The primary colors are deep blacks and bright teal, indicating scanning or detection. The style is flat, graphic, and reminiscent of a comic book panel." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDLOH9JRBE_2HL602DXYwSGfXy4dWdJFWBc_0dXFXmk-IP2T9g0NMFf0jI2YRphwVsrsPoQDWX2FrPkuvSXKfH121wO29rliSZvvgdAaVxFWjfptnw_p_V0qOzUhLZvjSISxMnjcgAu12GSWGL2H_0nnCfwPt7sSQ8JMHbkofcXe6fmwYVrdYq3NZnEAwFYQnUQfl5IOUWM_UR23HYYvSCy2csnE86RQafcghoCBMPJsUNqy82XnSUUQQ')"></div>
+</div>
+</div>
+<!-- Investigate -->
+<div class="comic-card bg-surface-container/60 backdrop-blur-lg p-8 flex flex-col group mt-0 lg:mt-8">
+<div class="flex justify-between items-start mb-6">
+<span class="font-display-lg text-[48px] text-surface-variant group-hover:text-secondary-container transition-colors font-black italic">02</span>
+<span class="material-symbols-outlined text-secondary text-3xl group-hover:animate-pulse">troubleshoot</span>
+</div>
+<h4 class="font-headline-lg text-headline-lg-mobile uppercase mb-4 text-on-surface">Explain</h4>
+<p class="font-body-md text-on-surface-variant mb-6 flex-grow">Unpack complex algorithmic decisions into human-readable narratives.</p>
+<div class="h-32 w-full bg-surface-dim relative overflow-hidden border border-outline-variant/30 mt-auto">
+<div class="absolute inset-0 bg-cover bg-center opacity-40 mix-blend-screen group-hover:opacity-80 transition-opacity" data-alt="A cyberpunk illustration showing a complex network graph or node structure being analyzed. Connections are highlighted in bright magenta against a dark background. The aesthetic is sharp, high-contrast, and looks like a technical diagram from a sci-fi comic." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA3yHwgi0JFpmXVaGrLaLsICjaHc-FjybhVj4TN_EvXZalbSmMfEJ9c1Y8VmHgbz1SW8KHcvqe3ZigimAbX8V-kx-InqjOgNITnhCQs0oUxEdGA68_VPKXg_nzi49AKu_1VAajCpoAKK7tpLvEEzuvRtCSx0INUZxRxBJm2p29VJG-M2W7DFnezEwlTuZLponYf-C73uKWSiqF13hQ9tkr3HEhlzc3zt7CMBauhXbF_LA3ubX3yzGWY0g')"></div>
+</div>
+</div>
+<!-- Respond -->
+<div class="comic-card bg-surface-container/60 backdrop-blur-lg p-8 flex flex-col group mt-0 lg:mt-16">
+<div class="flex justify-between items-start mb-6">
+<span class="font-display-lg text-[48px] text-surface-variant group-hover:text-primary-container transition-colors font-black italic">03</span>
+<span class="material-symbols-outlined text-primary text-3xl group-hover:animate-pulse">crisis_alert</span>
+</div>
+<h4 class="font-headline-lg text-headline-lg-mobile uppercase mb-4 text-on-surface">Respond</h4>
+<p class="font-body-md text-on-surface-variant mb-6 flex-grow">Deploy targeted countermeasures instantly to halt malicious actors.</p>
+<div class="h-32 w-full bg-surface-dim relative overflow-hidden border border-outline-variant/30 mt-auto">
+<div class="absolute inset-0 bg-cover bg-center opacity-40 mix-blend-screen group-hover:opacity-80 transition-opacity" data-alt="A stylized illustration of a digital shield or barrier deflecting a cyber attack. The scene uses bold red and deep purple tones with sharp, angular fragments exploding outward. It embodies an aggressive, defensive action in a digital comic style." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAksc8GbfyfxLXhet4Pqc1TSfV3LJL7huyZfAggOacXJm6WJ5UqBK5tXIF40bJDZIPXWIMgc-uytbhJKOheUAsaTzdWyJpfMhXuBF5PXqEDbTEXO45YIuEP7kCX-C-PbJXO0pK4mx1YeuWtL-gVlA1dvd3UMuqyrgrwHQyp2rAmhwLq1PRhNX0-aRtmGLNVpfTEqQwV8THLdTDzvRcABXxwazLvwkTN2615DuFsXc-9AIK9h1jtZ5BXWg')"></div>
+</div>
+</div>
+<!-- Measure -->
+<div class="comic-card bg-surface-container/60 backdrop-blur-lg p-8 flex flex-col group mt-0 lg:mt-24">
+<div class="flex justify-between items-start mb-6">
+<span class="font-display-lg text-[48px] text-surface-variant group-hover:text-tertiary-container transition-colors font-black italic">04</span>
+<span class="material-symbols-outlined text-tertiary text-3xl group-hover:animate-pulse">monitoring</span>
+</div>
+<h4 class="font-headline-lg text-headline-lg-mobile uppercase mb-4 text-on-surface">Measure</h4>
+<p class="font-body-md text-on-surface-variant mb-6 flex-grow">Analyze impact and refine models based on historical countermeasure success.</p>
+<div class="h-32 w-full bg-surface-dim relative overflow-hidden border border-outline-variant/30 mt-auto">
+<div class="absolute inset-0 bg-cover bg-center opacity-40 mix-blend-screen group-hover:opacity-80 transition-opacity" data-alt="A graphic representation of a high-tech dashboard chart soaring upwards. The visual uses neon cyan lines over a dark grid background, indicating performance metrics. The style is clean, technical, and heavily inspired by cyber-brutalism data visualization." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBZh06YvgcBFsyVW48dXyoY1IeGqTkCWouMB1eX31MEYnySS2TnuHNZv0yfzEPrJeA4UR_L8cbd5NH5t2H3W6YGYqkLxRRU8f3kad2-S_BBrQMwUVUBwdWs50HrvYLfNzW1Whxd3tNcdqw9Xgr6bqMz-MgBQDjexk685HUN5CAFZa1aOC-WiIIaRn02u8_NPglaQVDWDs2qafQqRhn0DhG1C4xczb2bRKw5-slzJql_mh1WZktjuNTWFg')"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="fixed bottom-0 w-full flex items-center justify-between px-margin-mobile md:px-margin-desktop h-10 bg-surface-container-lowest/90 backdrop-blur-md border-t border-outline-variant/20 flat no shadows docked full-width bottom-0 z-40">
+<div class="font-label-sm text-label-sm uppercase tracking-widest text-tertiary dark:text-tertiary-fixed">
+            FRAUDOPS SYSTEM v2.4.0
+        </div>
+<div class="flex items-center gap-6">
+<a class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant/60 hover:text-tertiary transition-colors" href="#">Session Data</a>
+<a class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant/60 hover:text-tertiary transition-colors" href="#">Network Latency</a>
+<a class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant/60 hover:text-tertiary transition-colors" href="#">Privacy Protocol</a>
+</div>
+</footer>
+</body></html>

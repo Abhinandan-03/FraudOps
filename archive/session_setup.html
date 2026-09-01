@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FRAUDOPS - Session Setup</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Anybody:ital,wght@0,100..900;1,100..900&amp;family=Geist:wght@100..900&amp;family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container": "#201f21",
+                        "surface-tint": "#ffb4ac",
+                        "secondary": "#e1b6ff",
+                        "surface-dim": "#131315",
+                        "on-primary-fixed": "#410002",
+                        "on-tertiary-fixed-variant": "#004f53",
+                        "primary-container": "#e21b23",
+                        "error": "#ffb4ab",
+                        "on-tertiary": "#003739",
+                        "secondary-fixed": "#f2daff",
+                        "surface-container-highest": "#353437",
+                        "secondary-fixed-dim": "#e1b6ff",
+                        "on-secondary-fixed": "#2e004e",
+                        "background": "#131315",
+                        "secondary-container": "#a20fff",
+                        "on-primary-fixed-variant": "#93000d",
+                        "inverse-surface": "#e5e1e4",
+                        "primary": "#ffb4ac",
+                        "surface-variant": "#353437",
+                        "error-container": "#93000a",
+                        "on-error": "#690005",
+                        "tertiary-fixed-dim": "#00dce5",
+                        "on-secondary-fixed-variant": "#6c00ae",
+                        "tertiary-fixed": "#63f7ff",
+                        "on-primary": "#690006",
+                        "inverse-primary": "#c00015",
+                        "on-secondary-container": "#faebff",
+                        "on-secondary": "#4c007c",
+                        "on-tertiary-container": "#eafeff",
+                        "surface-container-low": "#1c1b1d",
+                        "tertiary": "#00dce5",
+                        "outline-variant": "#5d3f3c",
+                        "surface-container-lowest": "#0e0e10",
+                        "primary-fixed-dim": "#ffb4ac",
+                        "primary-fixed": "#ffdad6",
+                        "outline": "#ae8883",
+                        "on-background": "#e5e1e4",
+                        "on-surface": "#e5e1e4",
+                        "inverse-on-surface": "#313032",
+                        "on-surface-variant": "#e7bdb8",
+                        "surface": "#131315",
+                        "on-tertiary-fixed": "#002021",
+                        "on-error-container": "#ffdad6",
+                        "surface-container-high": "#2a2a2c",
+                        "on-primary-container": "#fff8f7",
+                        "tertiary-container": "#008085",
+                        "surface-bright": "#39393b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "container-max": "1440px",
+                        "margin-desktop": "64px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Anybody"],
+                        "headline-lg": ["Anybody"],
+                        "label-md": ["JetBrains Mono"],
+                        "body-lg": ["Geist"],
+                        "headline-lg-mobile": ["Anybody"],
+                        "label-sm": ["JetBrains Mono"],
+                        "headline-xl": ["Anybody"],
+                        "body-md": ["Geist"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["72px", { "lineHeight": "72px", "letterSpacing": "-0.04em", "fontWeight": "900" }],
+                        "headline-lg": ["32px", { "lineHeight": "36px", "fontWeight": "700" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "28px", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.08em", "fontWeight": "500" }],
+                        "headline-xl": ["48px", { "lineHeight": "52px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    },
+                    "animation": {
+                        "cyber-pulse": "cyber-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+                        "scanline": "scanline 8s linear infinite",
+                    },
+                    "keyframes": {
+                        "cyber-pulse": {
+                            "0%, 100%": { opacity: "1", boxShadow: "0 0 20px 0px rgba(226,27,35,0.7)" },
+                            "50%": { opacity: ".8", boxShadow: "0 0 40px 10px rgba(226,27,35,0.3)" },
+                        },
+                        "scanline": {
+                            "0%": { transform: "translateY(-100%)" },
+                            "100%": { transform: "translateY(100vh)" }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Cyber-Brutalist Range Slider Styling */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]:focus {
+            outline: none;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #353437; /* surface-variant */
+            border-radius: 0;
+            border: 1px solid rgba(226,27,35,0.2);
+        }
+        input[type=range]::-webkit-slider-thumb {
+            height: 24px;
+            width: 12px;
+            border-radius: 0;
+            background: #e21b23; /* primary-container */
+            cursor: pointer;
+            -webkit-appearance: none;
+            margin-top: -10px;
+            box-shadow: 0 0 10px rgba(226,27,35,0.5);
+            clip-path: polygon(0 0, 100% 20%, 100% 100%, 0 80%);
+            transition: all 0.2s ease;
+        }
+        input[type=range]:hover::-webkit-slider-thumb {
+            background: #00dce5; /* tertiary */
+            box-shadow: 0 0 15px rgba(0,220,229,0.6);
+            transform: scale(1.2);
+        }
+
+        /* Subtle Web/Halftone Background Pattern */
+        .bg-web-pattern {
+            background-image: radial-gradient(rgba(226, 27, 35, 0.05) 2px, transparent 2px), radial-gradient(rgba(226, 27, 35, 0.02) 1px, transparent 1px);
+            background-position: 0 0, 20px 20px;
+            background-size: 40px 40px, 40px 40px;
+        }
+        
+        .glitch-hover:hover {
+            transform: translate(-2px, 2px);
+            box-shadow: 4px -4px 0px 0px rgba(0, 220, 229, 0.5); /* Cyber Teal offset */
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md overflow-x-hidden selection:bg-primary-container selection:text-white min-h-screen flex flex-col">
+<!-- Ambient Background Effects -->
+<div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+<div class="absolute inset-0 bg-web-pattern opacity-50"></div>
+<!-- Prowler/Miles Glows -->
+<div class="absolute top-[-20%] left-[-10%] w-[60vw] h-[60vw] rounded-full bg-primary-container/10 blur-[120px] mix-blend-screen"></div>
+<div class="absolute bottom-[-20%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-secondary-container/10 blur-[100px] mix-blend-screen"></div>
+<!-- Scanline overlay -->
+<div class="absolute inset-0 w-full h-[2px] bg-white/5 animate-scanline pointer-events-none"></div>
+</div>
+<!-- TopNavBar (Shared Component) -->
+<nav class="fixed top-0 w-full flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 bg-surface-container/70 dark:bg-surface-container-low/70 backdrop-blur-xl border-b border-outline-variant/10 shadow-[0_0_20px_rgba(226,27,35,0.15)] z-50 transition-all">
+<!-- Brand -->
+<div class="font-display-lg text-display-lg-mobile md:text-display-lg text-primary-container tracking-tighter uppercase italic drop-shadow-[0_0_10px_rgba(226,27,35,0.3)]">
+            FRAUDOPS
+        </div>
+<!-- Trailing Icons -->
+<div class="flex items-center gap-6">
+<button class="text-on-surface-variant hover:text-primary transition-all duration-150 hover:bg-primary/10 p-2 rounded-none active:skew-x-[-2deg]">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">query_stats</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-all duration-150 hover:bg-primary/10 p-2 rounded-none active:skew-x-[-2deg]">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">stadium</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-all duration-150 hover:bg-primary/10 p-2 rounded-none active:skew-x-[-2deg]">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">account_balance_wallet</span>
+</button>
+<!-- Operator Profile Image Placeholder -->
+<div class="w-10 h-10 border border-outline-variant/30 overflow-hidden ml-2 transform skew-x-[-5deg]">
+<img alt="Operator Profile" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all" data-alt="A gritty, high-contrast cyberpunk portrait avatar. The subject is partially obscured in shadows with bright crimson and neon teal rim lighting outlining their silhouette. The background is pitch black with subtle digital glitch artifacts." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3OUPL7s97wv9ruL2Au6C7rhEPz0iz87n1PEPi-li13_3Z9T2mA1sboZItHLgOz331PpWzPR3ti4g_bZ5AkC2Ry_PP0A3udaut5Tg1qbl5r0i87EsAT1fizuzVgApWMEuWK8xkp26SYWH9pUlmpXmZ-ivNihASbr7NeJX_vhLxmihdUNrBILcJ_ddhRZRdONkBOCGQ5sVzADtiw31XB_0rl7AI77UZS2p5rX87IJDFmogJrGyoNHOnvw"/>
+</div>
+</div>
+</nav>
+<!-- Main Content Canvas (Focused Setup Journey) -->
+<main class="relative z-10 flex-grow flex flex-col items-center justify-center pt-24 pb-12 px-margin-mobile md:px-margin-desktop w-full max-w-container-max mx-auto">
+<!-- Header -->
+<header class="w-full mb-12 text-left md:text-center">
+<h1 class="font-headline-xl text-headline-lg-mobile md:text-headline-xl text-on-surface tracking-tighter uppercase inline-block relative transform skew-x-[-3deg]">
+<span class="text-primary-container">WELCOME,</span> OPERATIVE
+                <!-- Cyber Glitch Accent -->
+<span class="absolute -bottom-2 left-0 w-1/3 h-1 bg-tertiary shadow-[0_0_10px_rgba(0,220,229,0.8)]"></span>
+</h1>
+<p class="font-label-md text-on-surface-variant mt-4 max-w-2xl mx-auto uppercase tracking-widest opacity-70">
+                Configure your intrusion vector. Higher difficulty yields exponentially greater reward at the risk of immediate system lockout.
+            </p>
+</header>
+<!-- Bento Grid Configuration Area -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter w-full">
+<!-- Left Column: Difficulty Selection -->
+<div class="lg:col-span-7 flex flex-col gap-6 bg-surface-container/70 backdrop-blur-xl border border-white/5 p-8 relative overflow-hidden group">
+<!-- Ghost overlay for depth -->
+<div class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+<div class="flex items-center justify-between border-b border-outline-variant/20 pb-4 mb-4">
+<h2 class="font-label-md text-tertiary tracking-widest uppercase flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">security</span>
+                        Threat Level Protocol
+                    </h2>
+<span class="font-label-sm text-on-surface-variant/50">SYS.REQ.V2</span>
+</div>
+<!-- Difficulty Badges -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 h-full" id="difficulty-selector">
+<!-- Recruit -->
+<button class="relative p-6 border border-outline-variant/30 text-left flex flex-col gap-2 transition-all duration-300 hover:border-tertiary/50 hover:bg-surface-variant/30 group/btn focus:outline-none">
+<div class="absolute top-0 right-0 w-0 h-0 border-t-[16px] border-r-[16px] border-t-transparent border-r-transparent group-hover/btn:border-r-tertiary/50 transition-all"></div>
+<span class="font-display-lg text-headline-lg-mobile text-on-surface-variant group-hover/btn:text-tertiary uppercase tracking-tighter transition-colors">Recruit</span>
+<span class="font-label-sm text-on-surface-variant/60 block mt-auto">Standard ICE protocols. Recommended for calibration runs.</span>
+</button>
+<!-- Analyst -->
+<button class="relative p-6 border border-outline-variant/30 text-left flex flex-col gap-2 transition-all duration-300 hover:border-tertiary/50 hover:bg-surface-variant/30 group/btn focus:outline-none">
+<div class="absolute top-0 right-0 w-0 h-0 border-t-[16px] border-r-[16px] border-t-transparent border-r-transparent group-hover/btn:border-r-tertiary/50 transition-all"></div>
+<span class="font-display-lg text-headline-lg-mobile text-on-surface-variant group-hover/btn:text-tertiary uppercase tracking-tighter transition-colors">Analyst</span>
+<span class="font-label-sm text-on-surface-variant/60 block mt-auto">Adaptive countermeasures active. Requires precise timing.</span>
+</button>
+<!-- Elite (Active State Demo) -->
+<button class="relative p-6 border border-primary-container bg-primary-container/10 text-left flex flex-col gap-2 transition-all duration-300 shadow-[inset_0_0_20px_rgba(226,27,35,0.1)] focus:outline-none transform scale-[1.02]">
+<div class="absolute top-0 right-0 w-0 h-0 border-t-[16px] border-r-[16px] border-t-transparent border-r-primary-container"></div>
+<!-- Scanline fx inside active button -->
+<div class="absolute inset-0 bg-[linear-gradient(to_bottom,transparent,rgba(226,27,35,0.1),transparent)] bg-[length:100%_4px] opacity-30 pointer-events-none"></div>
+<span class="font-display-lg text-headline-lg-mobile text-primary-fixed uppercase tracking-tighter drop-shadow-[0_0_8px_rgba(255,180,172,0.5)]">Elite</span>
+<span class="font-label-sm text-primary-fixed-dim/80 block mt-auto">Lethal system response. Black ICE deployed. Proceed with extreme prejudice.</span>
+<div class="absolute bottom-0 left-0 h-1 w-full bg-primary-container shadow-[0_0_10px_rgba(226,27,35,0.8)]"></div>
+</button>
+</div>
+</div>
+<!-- Right Column: Granular Settings (Sliders) -->
+<div class="lg:col-span-5 flex flex-col gap-8 bg-surface-container/70 backdrop-blur-xl border border-white/5 p-8 relative">
+<div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-tertiary/50 to-transparent"></div>
+<h2 class="font-label-md text-on-surface-variant tracking-widest uppercase flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-sm">tune</span>
+                    Session Parameters
+                </h2>
+<!-- Slider 1: Session Duration -->
+<div class="flex flex-col gap-4 group">
+<div class="flex justify-between items-end">
+<label class="font-label-sm text-on-surface uppercase tracking-widest">Temporal Window</label>
+<span class="font-label-md text-tertiary">45 MIN</span>
+</div>
+<div class="relative w-full">
+<input class="w-full relative z-10" max="120" min="15" type="range" value="45"/>
+<!-- Custom track background glow -->
+<div class="absolute top-1/2 left-0 w-full h-[1px] bg-tertiary/20 -translate-y-1/2 z-0 group-hover:bg-tertiary/40 transition-colors"></div>
+</div>
+</div>
+<!-- Slider 2: Freeze Tokens -->
+<div class="flex flex-col gap-4 group mt-2">
+<div class="flex justify-between items-end">
+<label class="font-label-sm text-on-surface uppercase tracking-widest">Cryo Tokens (Overrides)</label>
+<span class="font-label-md text-primary-fixed">03</span>
+</div>
+<div class="relative w-full">
+<input class="w-full relative z-10" max="10" min="0" type="range" value="3"/>
+<div class="absolute top-1/2 left-0 w-full h-[1px] bg-primary/20 -translate-y-1/2 z-0 group-hover:bg-primary/40 transition-colors"></div>
+</div>
+</div>
+<!-- Slider 3: Escalation Capacity -->
+<div class="flex flex-col gap-4 group mt-2">
+<div class="flex justify-between items-end">
+<label class="font-label-sm text-on-surface uppercase tracking-widest">Escalation Threshold</label>
+<span class="font-label-md text-secondary-fixed">HIGH</span>
+</div>
+<div class="relative w-full">
+<input class="w-full relative z-10" max="3" min="1" type="range" value="3"/>
+<div class="absolute top-1/2 left-0 w-full h-[1px] bg-secondary/20 -translate-y-1/2 z-0 group-hover:bg-secondary/40 transition-colors"></div>
+</div>
+<div class="flex justify-between px-1 text-[10px] font-label-sm text-on-surface-variant/40 mt-1">
+<span>LOW</span>
+<span>MED</span>
+<span>MAX</span>
+</div>
+</div>
+</div>
+</div>
+<!-- CTA Section -->
+<div class="mt-16 w-full flex justify-center relative">
+<!-- Background decorative wiring -->
+<div class="absolute top-1/2 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary-container/20 to-transparent -translate-y-1/2 -z-10 hidden md:block"></div>
+<button class="relative bg-primary-container text-white font-headline-lg-mobile md:font-headline-lg px-12 py-5 uppercase tracking-tighter skew-x-[-6deg] hover:skew-x-[-2deg] transition-all duration-300 group glitch-hover animate-cyber-pulse border border-transparent hover:border-white/50 focus:outline-none">
+<!-- Inner glitch layers -->
+<div class="absolute inset-0 bg-secondary-container mix-blend-color-dodge opacity-0 group-hover:opacity-30 transition-opacity"></div>
+<div class="absolute top-0 left-0 w-2 h-full bg-white/20"></div>
+<span class="relative z-10 flex items-center gap-3 transform skew-x-[6deg] group-hover:skew-x-[2deg] transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">bolt</span>
+                    START OPERATION
+                </span>
+<!-- Corner cut detail -->
+<div class="absolute bottom-0 right-0 w-0 h-0 border-b-[12px] border-l-[12px] border-b-background border-l-transparent"></div>
+</button>
+</div>
+</main>
+<!-- Script for basic interaction demo (Difficulty selection) -->
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const buttons = document.querySelectorAll('#difficulty-selector button');
+            
+            buttons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Reset all
+                    buttons.forEach(b => {
+                        b.className = 'relative p-6 border border-outline-variant/30 text-left flex flex-col gap-2 transition-all duration-300 hover:border-tertiary/50 hover:bg-surface-variant/30 group/btn focus:outline-none';
+                        const title = b.querySelector('.font-display-lg');
+                        title.className = 'font-display-lg text-headline-lg-mobile text-on-surface-variant group-hover/btn:text-tertiary uppercase tracking-tighter transition-colors';
+                        const desc = b.querySelector('.font-label-sm');
+                        desc.className = 'font-label-sm text-on-surface-variant/60 block mt-auto';
+                        
+                        // Remove active elements
+                        const corner = b.querySelector('.border-t-transparent');
+                        if(corner) corner.className = 'absolute top-0 right-0 w-0 h-0 border-t-[16px] border-r-[16px] border-t-transparent border-r-transparent group-hover/btn:border-r-tertiary/50 transition-all';
+                        
+                        const bottomBar = b.querySelector('.bg-primary-container.absolute.bottom-0');
+                        if(bottomBar) bottomBar.remove();
+                        const scanline = b.querySelector('.bg-\\[linear-gradient');
+                        if(scanline) scanline.remove();
+                    });
+
+                    // Set Active
+                    btn.className = 'relative p-6 border border-primary-container bg-primary-container/10 text-left flex flex-col gap-2 transition-all duration-300 shadow-[inset_0_0_20px_rgba(226,27,35,0.1)] focus:outline-none transform scale-[1.02]';
+                    
+                    const title = btn.querySelector('.font-display-lg');
+                    title.className = 'font-display-lg text-headline-lg-mobile text-primary-fixed uppercase tracking-tighter drop-shadow-[0_0_8px_rgba(255,180,172,0.5)]';
+                    
+                    const desc = btn.querySelector('.font-label-sm');
+                    desc.className = 'font-label-sm text-primary-fixed-dim/80 block mt-auto';
+
+                    const corner = btn.querySelector('.border-t-transparent');
+                    if(corner) corner.className = 'absolute top-0 right-0 w-0 h-0 border-t-[16px] border-r-[16px] border-t-transparent border-r-primary-container';
+
+                    // Add active decorative elements
+                    if(!btn.querySelector('.bg-primary-container.absolute.bottom-0')) {
+                        const bottomBar = document.createElement('div');
+                        bottomBar.className = 'absolute bottom-0 left-0 h-1 w-full bg-primary-container shadow-[0_0_10px_rgba(226,27,35,0.8)]';
+                        btn.appendChild(bottomBar);
+                    }
+                    if(!btn.querySelector('.bg-\\[linear-gradient')) {
+                        const scanline = document.createElement('div');
+                        scanline.className = 'absolute inset-0 bg-[linear-gradient(to_bottom,transparent,rgba(226,27,35,0.1),transparent)] bg-[length:100%_4px] opacity-30 pointer-events-none';
+                        btn.insertBefore(scanline, btn.firstChild);
+                    }
+                });
+            });
+        });
+    </script>
+</body></html>
