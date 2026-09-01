@@ -1,6 +1,16 @@
 import { Link } from 'react-router-dom';
+import { useGame } from '../contexts/GameContext';
 
 export default function Alerts() {
+  const { currentCase } = useGame();
+
+  const riskScore = currentCase?.riskScore ?? 87;
+  const signals = currentCase?.detectionSignals || [
+    { name: "Unusual Amount", description: "+4,500% above user baseline", icon: "payments", color: "primary" },
+    { name: "New Device Detected", description: "Unrecognized terminal ID: 0x9F42A", icon: "devices", color: "secondary" },
+    { name: "High Velocity", description: "12 transactions within 45 seconds", icon: "speed", color: "tertiary" }
+  ];
+
   return (
     <div className="min-h-screen bg-background font-body text-on-surface flex flex-col items-center justify-center relative p-6">
       
@@ -40,7 +50,7 @@ export default function Alerts() {
             <span className="font-mono text-[10px] text-on-surface-muted tracking-widest uppercase mb-6 font-bold">RISK SCORE</span>
             <div className="w-32 h-32 rounded-full border-4 border-primary/20 flex items-center justify-center relative shadow-[0_0_30px_rgba(226,27,35,0.2)]">
                <div className="absolute inset-0 border-4 border-primary rounded-full border-t-transparent transform rotate-12"></div>
-               <span className="font-headline font-black text-4xl text-primary">87<span className="text-2xl">%</span></span>
+               <span className="font-headline font-black text-4xl text-primary">{riskScore}<span className="text-2xl">%</span></span>
             </div>
           </div>
 
@@ -49,37 +59,29 @@ export default function Alerts() {
             <h3 className="font-mono text-[10px] text-on-surface-muted tracking-widest uppercase mb-6 font-bold">TRIGGER SIGNALS</h3>
             
             <div className="flex flex-col gap-6">
-              
-              {/* Signal 1 */}
-              <div className="flex items-start gap-4">
-                <div className="mt-1 w-1 h-10 bg-primary rounded-full hidden md:block"></div>
-                <span className="material-symbols-outlined text-primary">payments</span>
-                <div>
-                  <div className="text-white font-bold text-sm mb-1">Unusual Amount</div>
-                  <div className="text-on-surface-muted text-xs font-mono">+4,500% above user baseline</div>
-                </div>
-              </div>
+              {signals.map((sig, idx) => {
+                const color = sig.color === 'primary' || (sig.percent && sig.percent >= 90) ? 'primary' :
+                  sig.color === 'secondary' || (sig.percent && sig.percent >= 70) ? 'secondary' : 'tertiary';
 
-              {/* Signal 2 */}
-              <div className="flex items-start gap-4">
-                <div className="mt-1 w-1 h-10 bg-secondary rounded-full hidden md:block"></div>
-                <span className="material-symbols-outlined text-secondary">devices</span>
-                <div>
-                  <div className="text-white font-bold text-sm mb-1">New Device Detected</div>
-                  <div className="text-on-surface-muted text-xs font-mono">Unrecognized terminal ID: 0x9F42A</div>
-                </div>
-              </div>
+                const icon = sig.icon || (color === 'primary' ? 'payments' : color === 'secondary' ? 'devices' : 'speed');
 
-              {/* Signal 3 */}
-              <div className="flex items-start gap-4">
-                <div className="mt-1 w-1 h-10 bg-tertiary rounded-full hidden md:block"></div>
-                <span className="material-symbols-outlined text-tertiary">speed</span>
-                <div>
-                  <div className="text-white font-bold text-sm mb-1">High Velocity</div>
-                  <div className="text-on-surface-muted text-xs font-mono">12 transactions within 45 seconds</div>
-                </div>
-              </div>
-
+                return (
+                  <div key={idx} className="flex items-start gap-4">
+                    <div className={`mt-1 w-1 h-10 rounded-full hidden md:block ${
+                      color === 'primary' ? 'bg-primary' : color === 'secondary' ? 'bg-secondary' : 'bg-tertiary'
+                    }`}></div>
+                    <span className={`material-symbols-outlined ${
+                      color === 'primary' ? 'text-primary' : color === 'secondary' ? 'text-secondary' : 'text-tertiary'
+                    }`}>
+                      {icon}
+                    </span>
+                    <div>
+                      <div className="text-white font-bold text-sm mb-1">{sig.name}</div>
+                      <div className="text-on-surface-muted text-xs font-mono">{sig.description}</div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
@@ -88,7 +90,7 @@ export default function Alerts() {
         {/* Action Button */}
         <div className="flex justify-end relative z-10">
           <Link to="/investigation">
-            <button className="border-2 border-secondary text-secondary hover:bg-secondary hover:text-white transition-all font-headline font-bold text-lg uppercase tracking-wider px-8 py-3 flex items-center gap-3">
+            <button className="border-2 border-secondary text-secondary hover:bg-secondary hover:text-white transition-all font-headline font-bold text-lg uppercase tracking-wider px-8 py-3 flex items-center gap-3 shadow-[0_0_20px_rgba(161,0,255,0.2)]">
               <span className="material-symbols-outlined text-xl">search</span>
               INVESTIGATE
             </button>

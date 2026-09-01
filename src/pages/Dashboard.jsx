@@ -1,6 +1,25 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useGame } from '../contexts/GameContext';
 
 export default function Dashboard() {
+  const navigate = useNavigate();
+  const { sessionState, currentCase } = useGame();
+
+  const scoreFormatted = Number(sessionState.score).toLocaleString('en-US');
+  const streakFormatted = `x${sessionState.streak}`;
+  const fraudPreventedFormatted = sessionState.fraudPrevented 
+    ? `$${(sessionState.fraudPrevented / 1000000).toFixed(1)}M`
+    : '$4.2M';
+
+  const activeCase = currentCase || {
+    id: "CASE-8924A",
+    riskScore: 94,
+    feedLog: "Velocity spike identified from subnet block 192.168.x.x originating in Eastern Europe. Automated mitigation protocols engaged.",
+    transactionEvidence: [
+      { amount: 12450.00, risk: "94% RISK", loc: "Kyiv, UA" }
+    ]
+  };
+
   return (
     <div className="min-h-screen bg-background font-body text-on-surface flex flex-col h-screen overflow-hidden">
       
@@ -19,15 +38,24 @@ export default function Dashboard() {
               <span className="material-symbols-outlined text-[18px]">radio_button_checked</span>
               Live Stream
             </div>
-            <div className="text-on-surface-muted py-4 px-6 flex items-center gap-4 cursor-pointer hover:text-white transition-colors">
+            <div 
+              onClick={() => navigate('/investigation')}
+              className="text-on-surface-muted py-4 px-6 flex items-center gap-4 cursor-pointer hover:text-white transition-colors"
+            >
               <span className="material-symbols-outlined text-[18px]">analytics</span>
               Analysis
             </div>
-            <div className="text-on-surface-muted py-4 px-6 flex items-center gap-4 cursor-pointer hover:text-white transition-colors">
+            <div 
+              onClick={() => navigate('/leaderboard')}
+              className="text-on-surface-muted py-4 px-6 flex items-center gap-4 cursor-pointer hover:text-white transition-colors"
+            >
               <span className="material-symbols-outlined text-[18px]">history</span>
               Archive
             </div>
-            <div className="text-on-surface-muted py-4 px-6 flex items-center gap-4 cursor-pointer hover:text-white transition-colors">
+            <div 
+              onClick={() => navigate('/performance-report')}
+              className="text-on-surface-muted py-4 px-6 flex items-center gap-4 cursor-pointer hover:text-white transition-colors"
+            >
               <span className="material-symbols-outlined text-[18px]">hub</span>
               Network
             </div>
@@ -52,11 +80,11 @@ export default function Dashboard() {
             <div className="flex items-center gap-6">
               <div className="flex flex-col items-end">
                 <span className="font-mono text-[8px] text-on-surface-muted tracking-widest uppercase">SCORE</span>
-                <span className="font-headline font-bold text-xl text-white">1,240</span>
+                <span className="font-headline font-bold text-xl text-white">{scoreFormatted}</span>
               </div>
               <div className="flex flex-col items-end">
                 <span className="font-mono text-[8px] text-on-surface-muted tracking-widest uppercase">STREAK</span>
-                <span className="font-headline font-bold text-xl text-secondary">x3</span>
+                <span className="font-headline font-bold text-xl text-secondary">{streakFormatted}</span>
               </div>
               
               <div className="h-8 w-px bg-border mx-2"></div>
@@ -71,10 +99,24 @@ export default function Dashboard() {
               </div>
               
               <div className="flex items-center gap-4 text-on-surface-muted ml-4">
-                <span className="material-symbols-outlined hover:text-white cursor-pointer text-[18px]">show_chart</span>
-                <span className="material-symbols-outlined hover:text-white cursor-pointer text-[18px]">diamond</span>
-                <span className="material-symbols-outlined hover:text-white cursor-pointer text-[18px]">account_balance_wallet</span>
-                <div className="w-8 h-8 rounded-full border border-border flex items-center justify-center bg-surface cursor-pointer hover:border-primary">
+                <span 
+                  onClick={() => navigate('/leaderboard')}
+                  className="material-symbols-outlined hover:text-white cursor-pointer text-[18px]" 
+                  title="Leaderboard"
+                >
+                  show_chart
+                </span>
+                <span 
+                  onClick={() => navigate('/performance-report')}
+                  className="material-symbols-outlined hover:text-white cursor-pointer text-[18px]" 
+                  title="Performance Report"
+                >
+                  diamond
+                </span>
+                <div 
+                  onClick={() => navigate('/investigation')}
+                  className="w-8 h-8 rounded-full border border-border flex items-center justify-center bg-surface cursor-pointer hover:border-primary"
+                >
                   <span className="material-symbols-outlined text-sm">person</span>
                 </div>
               </div>
@@ -91,17 +133,23 @@ export default function Dashboard() {
               </div>
               
               <div className="flex flex-col gap-4">
-                {/* Transaction Card - Critical */}
-                <div className="bg-surface p-4 border border-border border-l-4 border-l-primary hover:border-primary transition-colors cursor-pointer group">
-                  <div className="flex justify-between items-center mb-2 font-mono text-[10px] text-on-surface-muted">
-                    <span>TX-8924A</span>
-                    <span className="text-primary font-bold">94% RISK</span>
+                {/* Transaction Card - Active Critical Case */}
+                <Link to="/investigation">
+                  <div className="bg-surface p-4 border border-border border-l-4 border-l-primary hover:border-primary transition-colors cursor-pointer group">
+                    <div className="flex justify-between items-center mb-2 font-mono text-[10px] text-on-surface-muted">
+                      <span>{activeCase.id}</span>
+                      <span className="text-primary font-bold">{activeCase.riskScore}% RISK</span>
+                    </div>
+                    <div className="font-headline font-bold text-2xl text-white mb-2">
+                      ${activeCase.transactionEvidence?.[0]?.amount 
+                        ? Number(activeCase.transactionEvidence[0].amount).toLocaleString('en-US', { minimumFractionDigits: 2 })
+                        : '12,450.00'}
+                    </div>
+                    <div className="flex items-center gap-1 text-on-surface-muted text-xs">
+                      <span className="material-symbols-outlined text-[14px]">location_on</span> {activeCase.transactionEvidence?.[0]?.loc || 'Kyiv, UA'}
+                    </div>
                   </div>
-                  <div className="font-headline font-bold text-2xl text-white mb-2">$12,450.00</div>
-                  <div className="flex items-center gap-1 text-on-surface-muted text-xs">
-                    <span className="material-symbols-outlined text-[14px]">location_on</span> Kyiv, UA
-                  </div>
-                </div>
+                </Link>
 
                 {/* Transaction Card - Medium */}
                 <div className="bg-surface p-4 border border-border hover:border-tertiary transition-colors cursor-pointer group">
@@ -149,7 +197,7 @@ export default function Dashboard() {
                       <span className="material-symbols-outlined text-secondary text-3xl">warning</span>
                       <div>
                         <h3 className="font-headline font-bold text-xl text-white mb-2">Coordinated Attack Detected</h3>
-                        <p className="text-on-surface-muted text-sm mb-4">Velocity spike identified from subnet block 192.168.x.x originating in Eastern Europe. Automated mitigation protocols engaged.</p>
+                        <p className="text-on-surface-muted text-sm mb-4">{activeCase.feedLog}</p>
                         <div className="flex gap-2">
                           <span className="bg-surface border border-border px-2 py-1 font-mono text-[10px] text-on-surface-muted uppercase">VELOCITY_SPIKE</span>
                           <span className="bg-surface border border-border px-2 py-1 font-mono text-[10px] text-on-surface-muted uppercase">GEO_ANOMALY</span>
@@ -164,7 +212,7 @@ export default function Dashboard() {
                   <div className="font-mono text-[10px] text-on-surface-muted w-16 pt-1">10:42:01</div>
                   <div className="flex-1">
                     <div className="text-tertiary font-bold text-sm mb-1">Entity Freeze Authorized</div>
-                    <div className="text-on-surface-muted text-sm">Account ID #4492-X locked pending manual review. Score threshold exceeded.</div>
+                    <div className="text-on-surface-muted text-sm">Account ID #{activeCase.id} locked pending manual review. Score threshold exceeded.</div>
                   </div>
                 </div>
 
@@ -229,8 +277,8 @@ export default function Dashboard() {
           <span className="hover:text-white cursor-pointer transition-colors">PRIVACY PROTOCOL</span>
         </div>
         <div className="flex gap-6">
-          <span className="text-on-surface-muted">PREVENTED: <span className="text-tertiary">$4.2M</span></span>
-          <span>FP RATE: <span className="text-white">1.2%</span></span>
+          <span className="text-on-surface-muted">PREVENTED: <span className="text-tertiary">{fraudPreventedFormatted}</span></span>
+          <span>FP RATE: <span className="text-white">{sessionState.falsePositiveRate || 1.2}%</span></span>
         </div>
       </footer>
     </div>

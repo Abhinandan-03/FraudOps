@@ -1,6 +1,23 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useGame } from '../contexts/GameContext';
 
 export default function PerformanceReport() {
+  const navigate = useNavigate();
+  const { sessionState, startNewSession } = useGame();
+
+  const finalScore = Number(sessionState.score || 8420).toLocaleString('en-US');
+  const detectionAcc = sessionState.detectionAccuracy || 92;
+  const fpRate = sessionState.falsePositiveRate || 4;
+  const avgResponse = sessionState.avgResponseTime || 1.4;
+  const fraudPreventedK = sessionState.fraudPrevented 
+    ? (sessionState.fraudPrevented / 1000).toFixed(1)
+    : '12.4';
+
+  const handlePlayAgain = async () => {
+    await startNewSession({ difficulty: 'ELITE' });
+    navigate('/dashboard');
+  };
+
   return (
     <div className="min-h-screen bg-background font-body text-on-surface flex items-center justify-center relative overflow-hidden p-6">
       
@@ -8,7 +25,7 @@ export default function PerformanceReport() {
       <div className="absolute inset-4 border-2 border-secondary/50 rounded-sm pointer-events-none z-20 shadow-[0_0_50px_rgba(161,0,255,0.2)_inset,0_0_50px_rgba(161,0,255,0.2)] mix-blend-screen"></div>
 
       {/* Main Card */}
-      <div className="bg-surface-dim max-w-4xl w-full p-12 relative z-10 border border-border/50 shadow-2xl flex flex-col">
+      <div className="bg-surface-dim max-w-4xl w-full p-8 md:p-12 relative z-10 border border-border/50 shadow-2xl flex flex-col">
         
         {/* Top Terminal Badge */}
         <div className="flex justify-between items-center mb-10">
@@ -32,8 +49,8 @@ export default function PerformanceReport() {
             FINAL SCORE
           </h1>
           <div className="flex items-end gap-6">
-            <span className="font-headline font-black text-8xl text-white leading-none tracking-tighter" style={{textShadow: "0 10px 30px rgba(0,0,0,0.5)"}}>
-              8,420
+            <span className="font-headline font-black text-7xl md:text-8xl text-white leading-none tracking-tighter" style={{textShadow: "0 10px 30px rgba(0,0,0,0.5)"}}>
+              {finalScore}
             </span>
             <span className="bg-[#008055] text-white font-mono text-[10px] font-bold px-3 py-1 uppercase tracking-widest mb-2 border border-[#00B075]">
               TOP 2%
@@ -46,25 +63,25 @@ export default function PerformanceReport() {
           <div className="bg-surface border border-border p-6 flex flex-col items-start hover:border-tertiary transition-colors">
             <span className="material-symbols-outlined text-tertiary text-lg mb-4">track_changes</span>
             <span className="font-mono text-[8px] text-on-surface-muted uppercase font-bold tracking-widest mb-1">DETECTION ACC</span>
-            <div className="font-headline font-black text-4xl text-white">92<span className="text-tertiary text-2xl">%</span></div>
+            <div className="font-headline font-black text-3xl md:text-4xl text-white">{detectionAcc}<span className="text-tertiary text-2xl">%</span></div>
           </div>
           
           <div className="bg-surface border border-border p-6 flex flex-col items-start hover:border-secondary transition-colors">
             <span className="material-symbols-outlined text-secondary text-lg mb-4">filter_alt</span>
             <span className="font-mono text-[8px] text-on-surface-muted uppercase font-bold tracking-widest mb-1">FP RATE</span>
-            <div className="font-headline font-black text-4xl text-white">4<span className="text-secondary text-2xl">%</span></div>
+            <div className="font-headline font-black text-3xl md:text-4xl text-white">{fpRate}<span className="text-secondary text-2xl">%</span></div>
           </div>
 
           <div className="bg-surface border border-border p-6 flex flex-col items-start hover:border-primary transition-colors">
             <span className="material-symbols-outlined text-primary text-lg mb-4">timer</span>
             <span className="font-mono text-[8px] text-on-surface-muted uppercase font-bold tracking-widest mb-1">AVG RESPONSE</span>
-            <div className="font-headline font-black text-4xl text-white">1.4<span className="text-on-surface-muted text-2xl">s</span></div>
+            <div className="font-headline font-black text-3xl md:text-4xl text-white">{avgResponse}<span className="text-on-surface-muted text-2xl">s</span></div>
           </div>
 
           <div className="bg-surface border border-border p-6 flex flex-col items-start hover:border-[#00F5FF] transition-colors">
             <span className="material-symbols-outlined text-[#00F5FF] text-lg mb-4">account_balance_wallet</span>
             <span className="font-mono text-[8px] text-on-surface-muted uppercase font-bold tracking-widest mb-1">FRAUD PREVENTED</span>
-            <div className="font-headline font-black text-4xl text-white"><span className="text-[#00F5FF] text-2xl">$</span>12.4<span className="text-[#00F5FF] text-2xl">k</span></div>
+            <div className="font-headline font-black text-3xl md:text-4xl text-white"><span className="text-[#00F5FF] text-2xl">$</span>{fraudPreventedK}<span className="text-[#00F5FF] text-2xl">k</span></div>
           </div>
         </div>
 
@@ -157,12 +174,13 @@ export default function PerformanceReport() {
             </button>
           </Link>
           
-          <Link to="/">
-            <button className="bg-primary text-white hover:bg-primary/90 transition-colors font-headline font-bold text-lg uppercase tracking-wider px-10 py-4 flex items-center gap-2 shadow-[0_0_20px_rgba(226,27,35,0.4)]">
-              <span className="material-symbols-outlined">play_arrow</span>
-              PLAY AGAIN
-            </button>
-          </Link>
+          <button 
+            onClick={handlePlayAgain}
+            className="bg-primary text-white hover:bg-primary/90 transition-colors font-headline font-bold text-lg uppercase tracking-wider px-10 py-4 flex items-center gap-2 shadow-[0_0_20px_rgba(226,27,35,0.4)] cursor-pointer"
+          >
+            <span className="material-symbols-outlined">play_arrow</span>
+            PLAY AGAIN
+          </button>
         </div>
 
       </div>

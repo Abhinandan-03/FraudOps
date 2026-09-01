@@ -1,23 +1,40 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Button from '../components/Button';
+import { useGame } from '../contexts/GameContext';
 
 export default function SessionSetup() {
+  const navigate = useNavigate();
+  const { startNewSession } = useGame();
   const [difficulty, setDifficulty] = useState('ELITE');
   const [temporalWindow, setTemporalWindow] = useState(45);
   const [cryoTokens, setCryoTokens] = useState(3);
   const [escalation, setEscalation] = useState(100); // 100 for HIGH
 
+  const handleStartOperation = async () => {
+    await startNewSession({
+      difficulty,
+      temporalWindow: Number(temporalWindow),
+      cryoTokens: Number(cryoTokens),
+      escalation: Number(escalation)
+    });
+    navigate('/dashboard');
+  };
+
   return (
     <div className="min-h-screen bg-background font-body text-on-surface flex flex-col p-6">
       {/* Top Nav */}
       <nav className="flex justify-between items-center mb-16 max-w-6xl mx-auto w-full">
-        <div className="text-primary font-headline font-bold italic tracking-tighter text-3xl">FRAUDOPS</div>
+        <div 
+          onClick={() => navigate('/')} 
+          className="text-primary font-headline font-bold italic tracking-tighter text-3xl cursor-pointer"
+        >
+          FRAUDOPS
+        </div>
         <div className="flex items-center gap-6 text-on-surface-muted">
-          <span className="material-symbols-outlined hover:text-white cursor-pointer transition-colors">show_chart</span>
-          <span className="material-symbols-outlined hover:text-white cursor-pointer transition-colors">diamond</span>
-          <span className="material-symbols-outlined hover:text-white cursor-pointer transition-colors">account_balance_wallet</span>
-          <div className="w-8 h-8 bg-surface-dim border border-border flex items-center justify-center cursor-pointer hover:border-primary">
+          <span onClick={() => navigate('/leaderboard')} className="material-symbols-outlined hover:text-white cursor-pointer transition-colors">show_chart</span>
+          <span onClick={() => navigate('/performance-report')} className="material-symbols-outlined hover:text-white cursor-pointer transition-colors">diamond</span>
+          <div onClick={() => navigate('/dashboard')} className="w-8 h-8 bg-surface-dim border border-border flex items-center justify-center cursor-pointer hover:border-primary">
              <span className="material-symbols-outlined text-sm">person</span>
           </div>
         </div>
@@ -136,14 +153,18 @@ export default function SessionSetup() {
         </div>
 
         {/* Start Button */}
-        <Link to="/dashboard" className="mb-12">
-          <Button variant="primary" className="skew-container px-12 py-4 shadow-[0_0_20px_rgba(226,27,35,0.5)]">
+        <div className="mb-12">
+          <Button 
+            onClick={handleStartOperation}
+            variant="primary" 
+            className="skew-container px-12 py-4 shadow-[0_0_20px_rgba(226,27,35,0.5)] cursor-pointer"
+          >
             <span className="unskew-content flex items-center gap-2">
               <span className="material-symbols-outlined text-sm">bolt</span>
               [ START OPERATION ]
             </span>
           </Button>
-        </Link>
+        </div>
 
       </main>
     </div>

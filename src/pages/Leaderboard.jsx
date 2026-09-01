@@ -1,6 +1,17 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useGame } from '../contexts/GameContext';
 
 export default function Leaderboard() {
+  const navigate = useNavigate();
+  const { sessionState } = useGame();
+
+  const userScore = (84000 + (sessionState.score || 1240)).toLocaleString('en-US');
+  const userAcc = `${sessionState.detectionAccuracy || 93.8}%`;
+  const userResp = `${sessionState.avgResponseTime || 1.1}s`;
+  const userPrevented = sessionState.fraudPrevented 
+    ? `$${(sessionState.fraudPrevented / 1000000).toFixed(1)}M`
+    : '$5.1M';
+
   return (
     <div className="min-h-screen bg-background font-body text-on-surface flex flex-col h-screen overflow-hidden">
       
@@ -20,28 +31,39 @@ export default function Leaderboard() {
           </div>
           
           <nav className="flex-1 flex flex-col mt-4">
-            <div className="text-on-surface-muted py-4 px-6 flex items-center gap-4 cursor-pointer hover:text-white transition-colors">
+            <div 
+              onClick={() => navigate('/dashboard')}
+              className="text-on-surface-muted py-4 px-6 flex items-center gap-4 cursor-pointer hover:text-white transition-colors"
+            >
               <span className="material-symbols-outlined text-[18px]">radio_button_checked</span>
               Live Stream
             </div>
-            <div className="text-on-surface-muted py-4 px-6 flex items-center gap-4 cursor-pointer hover:text-white transition-colors">
+            <div 
+              onClick={() => navigate('/investigation')}
+              className="text-on-surface-muted py-4 px-6 flex items-center gap-4 cursor-pointer hover:text-white transition-colors"
+            >
               <span className="material-symbols-outlined text-[18px]">analytics</span>
               Analysis
             </div>
-            <div className="text-on-surface-muted py-4 px-6 flex items-center gap-4 cursor-pointer hover:text-white transition-colors">
+            <div className="bg-secondary text-white py-3 px-6 flex items-center gap-4 cursor-pointer font-bold shadow-[0_0_15px_rgba(161,0,255,0.3)]">
               <span className="material-symbols-outlined text-[18px]">history</span>
               Archive
             </div>
-            <div className="text-on-surface-muted py-4 px-6 flex items-center gap-4 cursor-pointer hover:text-white transition-colors">
+            <div 
+              onClick={() => navigate('/performance-report')}
+              className="text-on-surface-muted py-4 px-6 flex items-center gap-4 cursor-pointer hover:text-white transition-colors"
+            >
               <span className="material-symbols-outlined text-[18px]">hub</span>
               Network
             </div>
           </nav>
           
           <div className="p-6">
-            <button className="w-full bg-primary text-white font-headline font-bold uppercase tracking-wider py-3 hover:bg-primary/90 transition-colors shadow-[0_0_15px_rgba(226,27,35,0.4)] border border-primary text-sm">
-              DEPLOY COUNTERMEASURE
-            </button>
+            <Link to="/investigation">
+              <button className="w-full bg-primary text-white font-headline font-bold uppercase tracking-wider py-3 hover:bg-primary/90 transition-colors shadow-[0_0_15px_rgba(226,27,35,0.4)] border border-primary text-sm">
+                DEPLOY COUNTERMEASURE
+              </button>
+            </Link>
           </div>
         </aside>
 
@@ -51,20 +73,24 @@ export default function Leaderboard() {
           {/* Top Header */}
           <header className="h-20 border-b border-border flex items-center justify-between px-8 bg-background relative z-10">
             <div className="flex items-center gap-12">
-              <div className="text-primary font-headline font-black italic tracking-tighter text-4xl text-glitch">FRAUDOPS</div>
+              <div 
+                onClick={() => navigate('/dashboard')}
+                className="text-primary font-headline font-black italic tracking-tighter text-4xl text-glitch cursor-pointer"
+              >
+                FRAUDOPS
+              </div>
               
               <nav className="hidden md:flex items-center gap-8 font-mono text-[10px] tracking-widest uppercase font-bold text-on-surface-muted">
-                <span className="hover:text-white cursor-pointer transition-colors">DASHBOARD</span>
+                <span onClick={() => navigate('/dashboard')} className="hover:text-white cursor-pointer transition-colors">DASHBOARD</span>
                 <span className="text-white border-b-2 border-primary pb-1 pt-1">LEADERBOARD</span>
-                <span className="hover:text-white cursor-pointer transition-colors">OPERATIONS</span>
+                <span onClick={() => navigate('/investigation')} className="hover:text-white cursor-pointer transition-colors">OPERATIONS</span>
               </nav>
             </div>
             
             <div className="flex items-center gap-4 text-on-surface-muted">
-              <span className="material-symbols-outlined hover:text-white cursor-pointer text-[18px]">show_chart</span>
-              <span className="material-symbols-outlined hover:text-white cursor-pointer text-[18px]">diamond</span>
-              <span className="material-symbols-outlined hover:text-white cursor-pointer text-[18px]">account_balance_wallet</span>
-              <div className="w-8 h-8 rounded-full border border-border flex items-center justify-center bg-surface-dim cursor-pointer hover:border-primary">
+              <span onClick={() => navigate('/leaderboard')} className="material-symbols-outlined hover:text-white cursor-pointer text-[18px]">show_chart</span>
+              <span onClick={() => navigate('/performance-report')} className="material-symbols-outlined hover:text-white cursor-pointer text-[18px]">diamond</span>
+              <div onClick={() => navigate('/dashboard')} className="w-8 h-8 rounded-full border border-border flex items-center justify-center bg-surface-dim cursor-pointer hover:border-primary">
                 <span className="material-symbols-outlined text-sm">person</span>
               </div>
             </div>
@@ -168,10 +194,10 @@ export default function Leaderboard() {
                         <div className="font-mono text-[8px] tracking-widest uppercase text-white font-bold">ACTIVE SESSION</div>
                       </div>
                     </div>
-                    <div className="text-right font-mono text-tertiary font-bold">85,220</div>
-                    <div className="text-right font-mono text-white text-xs font-bold">93.8%</div>
-                    <div className="text-right font-mono text-white text-xs font-bold">1.1s</div>
-                    <div className="text-right font-mono text-white text-xs font-bold">$5.1M</div>
+                    <div className="text-right font-mono text-tertiary font-bold">{userScore}</div>
+                    <div className="text-right font-mono text-white text-xs font-bold">{userAcc}</div>
+                    <div className="text-right font-mono text-white text-xs font-bold">{userResp}</div>
+                    <div className="text-right font-mono text-white text-xs font-bold">{userPrevented}</div>
                     
                     {/* Glowing crosshair line */}
                     <div className="absolute top-1/2 left-0 w-[150vw] h-[1px] bg-primary/30 pointer-events-none -translate-y-1/2 z-[-1] -translate-x-[20vw]"></div>
@@ -204,7 +230,7 @@ export default function Leaderboard() {
           <span>FRAUDOPS SYSTEM V2.4.0</span>
         </div>
         <div className="flex gap-6">
-          <span className="hover:text-white cursor-pointer transition-colors">SESSION DATA</span>
+          <span onClick={() => navigate('/dashboard')} className="hover:text-white cursor-pointer transition-colors">SESSION DATA</span>
           <span className="hover:text-white cursor-pointer transition-colors">NETWORK LATENCY</span>
           <span className="hover:text-white cursor-pointer transition-colors">PRIVACY PROTOCOL</span>
         </div>

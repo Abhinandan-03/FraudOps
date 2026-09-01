@@ -1,0 +1,196 @@
+import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
+import fraudOpsApi from '../services/fraudOpsApi';
+import { useTheme } from './ThemeContext';
+
+const GameContext = createContext();
+
+export const GameProvider = ({ children }) => {
+  const { triggerSuccessAnimation, triggerFailureAnimation, handleNextCase } = useTheme();
+
+  const [currentCase, setCurrentCase] = useState(null);
+  const [sessionState, setSessionState] = useState({
+    score: 1240,
+    streak: 3,
+    difficulty: 'ELITE',
+    cryoTokens: 3,
+    casesCompleted: 3,
+    detectionAccuracy: 92.4,
+    falsePositiveRate: 1.2,
+    avgResponseTime: 1.2,
+    fraudPrevented: 124500,
+    activeCaseId: null
+  });
+
+  const [lastResult, setLastResult] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoadingCase, setIsLoadingCase] = useState(true);
+  const [error, setError] = useState(null);
+
+  const caseStartTimeRef = useRef(null);
+  const isSubmittingRef = useRef(false);
+
+  // Load initial case and session state on mount
+  useEffect(() => {
+    caseStartTimeRef.current = Date.now();
+    let isMounted = true;
+
+    async function loadInitialData() {
+      setIsLoadingCase(true);
+      setError(null);
+      try {
+        const [session, caseData] = await Promise.all([
+          fraudOpsApi.getSessionState(),
+          fraudOpsApi.getNextCase('ELITE')
+        ]);
+
+        if (isMounted) {
+          if (session) setSessionState(session);
+          if (caseData) {
+            setCurrentCase(caseData);
+            caseStartTimeRef.current = Date.now();
+          }
+        }
+      } catch (err) {
+        console.error('Error initializing GameContext:', err);
+        if (isMounted) setError(err.message || 'Failed to load case data');
+      } finally {
+        if (isMounted) setIsLoadingCase(false);
+      }
+    }
+
+    loadInitialData();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  /**
+   * Submit an operative decision on the current case to the backend
+   */
+  const submitAction = useCallback(async (action) => {
+    if (isSubmittingRef.current || !currentCase) {
+      return null;
+    }
+
+    isSubmittingRef.current = true;
+    setIsSubmitting(true);
+    setError(null);
+
+    const startTime = caseStartTimeRef.current || (Date.now() - 1200);
+    const elapsedMs = Date.now() - startTime;
+    const responseTime = Math.max(0.4, Number((elapsedMs / 1000).toFixed(1)));
+
+    try {
+      // Backend is single source of truth for evaluation outcome & scoring
+      const result = await fraudOpsApi.submitDecision(currentCase.id, action, { responseTime });
+
+      // Update session metrics from backend outcome
+      setSessionState((prev) => ({
+        ...prev,
+        score: result.totalScore !== undefined ? result.totalScore : Math.max(0, prev.score + result.points),
+        streak: result.streak !== undefined ? result.streak : (result.correct ? prev.streak + 1 : 0),
+        casesCompleted: prev.casesCompleted + 1,
+        fraudPrevented: result.correct && currentCase.groundTruth?.fraudAmount 
+          ? prev.fraudPrevented + currentCase.groundTruth.fraudAmount 
+          : prev.fraudPrevented
+      }));
+
+      setLastResult(result);
+
+      // Trigger animations according to backend response
+      if (result.correct) {
+        triggerSuccessAnimation({
+          points: result.points,
+          title: 'CORRECT DECISION',
+          subtitle: result.outcome ? result.outcome.toUpperCase() : 'THREAT NEUTRALIZED'
+        });
+      } else {
+        triggerFailureAnimation({
+          points: result.points,
+          title: 'INCORRECT DECISION',
+          subtitle: result.outcome ? result.outcome.toUpperCase() : 'SYSTEM BREACH DETECTED'
+        });
+      }
+
+      return result;
+    } catch (err) {
+      console.error('Error submitting decision:', err);
+      setError(err.message || 'Error submitting decision to backend');
+      return null;
+    } finally {
+      isSubmittingRef.current = false;
+      setIsSubmitting(false);
+    }
+  }, [currentCase, triggerSuccessAnimation, triggerFailureAnimation]);
+
+  /**
+   * Advance to the next case (called explicitly from NEXT CASE / NEXT EVENT)
+   */
+  const advanceToNextCase = useCallback(async () => {
+    // 1. Fade out active music & reset theme state
+    handleNextCase();
+
+    // 2. Clear previous result & start loader
+    setLastResult(null);
+    setIsLoadingCase(true);
+    setError(null);
+
+    try {
+      const nextCaseData = await fraudOpsApi.getNextCase(sessionState.difficulty || 'ELITE');
+      setCurrentCase(nextCaseData);
+      caseStartTimeRef.current = Date.now();
+      return nextCaseData;
+    } catch (err) {
+      console.error('Error fetching next case:', err);
+      setError(err.message || 'Failed to retrieve next case');
+      return null;
+    } finally {
+      setIsLoadingCase(false);
+    }
+  }, [handleNextCase, sessionState.difficulty]);
+
+  /**
+   * Start or reset a game session
+   */
+  const startNewSession = useCallback(async (config = {}) => {
+    handleNextCase();
+    setLastResult(null);
+    setIsLoadingCase(true);
+    setError(null);
+
+    try {
+      const newSession = await fraudOpsApi.initSession(config);
+      setSessionState(newSession);
+
+      const firstCase = await fraudOpsApi.getNextCase(config.difficulty || 'ELITE');
+      setCurrentCase(firstCase);
+      caseStartTimeRef.current = Date.now();
+      return { session: newSession, firstCase };
+    } catch (err) {
+      console.error('Error starting new session:', err);
+      setError(err.message || 'Failed to start new session');
+      return null;
+    } finally {
+      setIsLoadingCase(false);
+    }
+  }, [handleNextCase]);
+
+  return (
+    <GameContext.Provider value={{
+      currentCase,
+      sessionState,
+      lastResult,
+      isSubmitting,
+      isLoadingCase,
+      error,
+      submitAction,
+      advanceToNextCase,
+      startNewSession
+    }}>
+      {children}
+    </GameContext.Provider>
+  );
+};
+
+export const useGame = () => useContext(GameContext);
