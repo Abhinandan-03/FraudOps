@@ -15,6 +15,8 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 const DEFAULT_TIMEOUT_MS = 6000;
 
+import { calculateNetworkScore } from '../utils/networkScoring';
+
 // Fallback dataset of realistic fraud operation scenarios
 const FALLBACK_CASES = [
   {
@@ -320,11 +322,14 @@ export const fraudOpsApi = {
       // Small simulated latency for production feel
       await new Promise((res) => setTimeout(res, 200));
 
-      return {
+      const returnedCase = {
         ...currentCase,
         activeCaseNumber: localCaseIndex,
         totalAvailableCases: FALLBACK_CASES.length
       };
+      
+      returnedCase.networkScore = calculateNetworkScore(returnedCase.entityGraph);
+      return returnedCase;
     }
   },
 
@@ -414,15 +419,16 @@ export const fraudOpsApi = {
     } catch (networkErr) {
       console.info('[FraudOps API] Initializing local session:', networkErr.message);
       localSessionState = {
-        score: 1000,
+        score: 0,
         streak: 0,
         difficulty: config.difficulty || "ELITE",
         cryoTokens: config.cryoTokens || 3,
         casesCompleted: 0,
-        detectionAccuracy: 95.0,
-        falsePositiveRate: 1.0,
-        avgResponseTime: 1.0,
+        detectionAccuracy: 0,
+        falsePositiveRate: 0,
+        avgResponseTime: 0,
         fraudPrevented: 0,
+        playerName: config.playerName || (typeof window !== 'undefined' ? localStorage.getItem('fraudOps_currentPlayer') : null) || "Operative_X",
         activeCaseId: FALLBACK_CASES[0].id
       };
       localCaseIndex = 0;
@@ -435,6 +441,82 @@ export const fraudOpsApi = {
    */
   async resetSession() {
     return this.initSession({ difficulty: "ELITE" });
+  },
+
+  /**
+   * Get global leaderboard
+   */
+  async getLeaderboard() {
+    try {
+      const data = await fetchWithTimeout('leaderboard', { method: 'GET' });
+      return data;
+    } catch (networkErr) {
+      console.info('[FraudOps API] Running in resilient fallback mode for getLeaderboard:', networkErr.message);
+      return [];
+    }
+  },
+
+  /**
+   * Submit complete session result for leaderboard
+   */
+  async submitSessionResult(sessionData) {
+    try {
+      const data = await fetchWithTimeout('leaderboard/submit', {
+        method: 'POST',
+        body: JSON.stringify(sessionData)
+      });
+      return data;
+    } catch (networkErr) {
+      console.info('[FraudOps API] Failed to submit session to leaderboard in fallback mode:', networkErr.message);
+      return { status: "ignored" };
+    }
+  },
+
+  /**
+   * Submit new password to reset account credentials directly
+   */
+  async resetPassword(email, newPassword) {
+    const cleanEmail = email.trim().toLowerCase();
+    try {
+      const data = await fetchWithTimeout('auth/reset-password', {
+        method: 'POST',
+        body: JSON.stringify({ email: cleanEmail, new_password: newPassword })
+      });
+      
+      // Also update local storage user credentials
+      try {
+        let users = JSON.parse(localStorage.getItem('fraudOpsUsers') || '[]');
+        const userIdx = users.findIndex(u => u.email.toLowerCase() === cleanEmail);
+        if (userIdx !== -1) {
+          users[userIdx].password = newPassword;
+        } else {
+          users.push({ email: cleanEmail, password: newPassword });
+        }
+        localStorage.setItem('fraudOpsUsers', JSON.stringify(users));
+      } catch (e) {}
+
+      return data;
+    } catch (networkErr) {
+      console.info('[FraudOps API] Fallback reset password execution:', networkErr.message);
+
+      // Update local storage user credentials in fallback
+      try {
+        let users = JSON.parse(localStorage.getItem('fraudOpsUsers') || '[]');
+        const userIdx = users.findIndex(u => u.email.toLowerCase() === cleanEmail);
+        if (userIdx !== -1) {
+          users[userIdx].password = newPassword;
+        } else {
+          users.push({ email: cleanEmail, password: newPassword });
+        }
+        localStorage.setItem('fraudOpsUsers', JSON.stringify(users));
+      } catch (e) {}
+
+      return {
+        status: "success",
+        message: "PASSWORD UPDATED SUCCESSFULLY",
+        email: cleanEmail
+      };
+    }
   }
 };
 

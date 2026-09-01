@@ -12,7 +12,7 @@ export default function Alerts() {
   ];
 
   return (
-    <div className="min-h-screen bg-background font-body text-on-surface flex flex-col items-center justify-center relative p-6">
+    <div className="min-h-screen bg-background font-body text-on-surface flex flex-col items-center justify-center relative p-6 force-prowler-theme">
       
       {/* Background Dim */}
       <div className="absolute inset-0 bg-background/80 pointer-events-none z-0"></div>

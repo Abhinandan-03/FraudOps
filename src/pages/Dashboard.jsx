@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useGame } from '../contexts/GameContext';
+import Footer from '../components/Footer';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -7,9 +8,6 @@ export default function Dashboard() {
 
   const scoreFormatted = Number(sessionState.score).toLocaleString('en-US');
   const streakFormatted = `x${sessionState.streak}`;
-  const fraudPreventedFormatted = sessionState.fraudPrevented 
-    ? `$${(sessionState.fraudPrevented / 1000000).toFixed(1)}M`
-    : '$4.2M';
 
   const activeCase = currentCase || {
     id: "CASE-8924A",
@@ -53,7 +51,7 @@ export default function Dashboard() {
               Archive
             </div>
             <div 
-              onClick={() => navigate('/performance-report')}
+              onClick={() => navigate('/network')}
               className="text-on-surface-muted py-4 px-6 flex items-center gap-4 cursor-pointer hover:text-white transition-colors"
             >
               <span className="material-symbols-outlined text-[18px]">hub</span>
@@ -75,7 +73,7 @@ export default function Dashboard() {
           
           {/* Top Header */}
           <header className="h-20 border-b border-border flex items-center justify-between px-8 bg-background">
-            <div className="text-primary font-headline font-black italic tracking-tighter text-4xl text-glitch">FRAUDOPS</div>
+            <div className="text-primary font-headline font-black italic tracking-tighter text-4xl">FRAUDOPS</div>
             
             <div className="flex items-center gap-6">
               <div className="flex flex-col items-end">
@@ -91,10 +89,10 @@ export default function Dashboard() {
               
               <div className="flex items-center gap-2">
                 <div className="bg-tertiary/10 border border-tertiary/30 px-2 py-1 flex items-center gap-1 text-tertiary font-mono text-[10px]">
-                  <span className="material-symbols-outlined text-[12px]">ac_unit</span> 02
+                  <span className="material-symbols-outlined text-[12px]">ac_unit</span> 00
                 </div>
                 <div className="bg-primary/10 border border-primary/30 px-2 py-1 flex items-center gap-1 text-primary font-mono text-[10px]">
-                  <span className="material-symbols-outlined text-[12px]">warning</span> 05
+                  <span className="material-symbols-outlined text-[12px]">warning</span> 00
                 </div>
               </div>
               
@@ -114,10 +112,12 @@ export default function Dashboard() {
                   diamond
                 </span>
                 <div 
-                  onClick={() => navigate('/investigation')}
-                  className="w-8 h-8 rounded-full border border-border flex items-center justify-center bg-surface cursor-pointer hover:border-primary"
+                  onClick={() => navigate('/profile')}
+                  className="flex items-center gap-3 border border-border px-3 py-1 bg-surface cursor-pointer hover:border-primary group"
+                  title="Operative Settings"
                 >
-                  <span className="material-symbols-outlined text-sm">person</span>
+                  <span className="font-mono text-[10px] text-white uppercase group-hover:text-primary transition-colors">{sessionState.playerName || 'OPERATIVE'}</span>
+                  <span className="material-symbols-outlined text-sm group-hover:text-primary transition-colors">settings</span>
                 </div>
               </div>
             </div>
@@ -230,19 +230,19 @@ export default function Dashboard() {
             {/* Global Risk Right Pane */}
             <div className="w-[320px] p-6 overflow-y-auto bg-background">
               
-              {/* Risk Level */}
+              {/* Detection Accuracy */}
               <div className="mb-10 text-center flex flex-col items-center">
-                <div className="font-headline font-bold text-xs uppercase tracking-widest text-white mb-6">GLOBAL RISK LEVEL</div>
+                <div className="font-headline font-bold text-xs uppercase tracking-widest text-white mb-6">DETECTION ACCURACY</div>
                 
-                <div className="w-40 h-40 rounded-full border-4 border-primary/20 flex items-center justify-center relative mb-6">
-                  <div className="absolute inset-0 border-4 border-primary rounded-full border-t-transparent border-l-transparent transform rotate-45"></div>
-                  <div className="absolute inset-0 rounded-full shadow-[0_0_40px_rgba(226,27,35,0.3)]"></div>
-                  <span className="font-headline font-black text-6xl text-white">8.4</span>
+                <div className="w-40 h-40 rounded-full border-4 border-tertiary/20 flex items-center justify-center relative mb-6">
+                  <div className="absolute inset-0 border-4 border-tertiary rounded-full border-t-transparent border-l-transparent transform rotate-45"></div>
+                  <div className="absolute inset-0 rounded-full shadow-[0_0_40px_rgba(0,245,255,0.2)]"></div>
+                  <span className="font-headline font-black text-5xl text-white">{sessionState.detectionAccuracy || '0'}<span className="text-2xl text-tertiary">%</span></span>
                 </div>
                 
                 <div className="flex gap-4 font-mono text-[10px] tracking-widest text-on-surface-muted font-bold">
-                  <span>ELEVATED</span>
-                  <span>DEFCON 3</span>
+                  <span>SYSTEM METRICS</span>
+                  <span>LIVE</span>
                 </div>
               </div>
 
@@ -251,15 +251,23 @@ export default function Dashboard() {
                 <div className="font-headline font-bold text-xs uppercase tracking-widest text-white mb-4 border-b border-border pb-2">ESCALATIONS</div>
                 
                 <div className="flex flex-col gap-3">
-                  <div className="p-4 border border-secondary bg-surface-dim hover:bg-surface transition-colors cursor-pointer shadow-[0_0_10px_rgba(161,0,255,0.1)]">
-                    <div className="text-secondary font-bold text-sm mb-1">Whale Review: VIP-992</div>
-                    <div className="text-on-surface-muted text-sm">$1.2M transfer pending.</div>
-                  </div>
-                  
-                  <div className="p-4 border border-border bg-surface-dim hover:bg-surface transition-colors cursor-pointer">
-                    <div className="text-white font-bold text-sm mb-1">KYC Mismatch</div>
-                    <div className="text-on-surface-muted text-sm">Doc scan failed for Acc...</div>
-                  </div>
+                  {sessionState.casesCompleted === 0 ? (
+                    <div className="p-4 border border-border bg-surface-dim opacity-50 flex items-center justify-center">
+                      <div className="text-on-surface-muted font-bold text-xs uppercase tracking-widest">NO ACTIVE ESCALATIONS</div>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="p-4 border border-secondary bg-surface-dim hover:bg-surface transition-colors cursor-pointer shadow-[0_0_10px_rgba(161,0,255,0.1)]">
+                        <div className="text-secondary font-bold text-sm mb-1">Whale Review: VIP-992</div>
+                        <div className="text-on-surface-muted text-sm">$1.2M transfer pending.</div>
+                      </div>
+                      
+                      <div className="p-4 border border-border bg-surface-dim hover:bg-surface transition-colors cursor-pointer">
+                        <div className="text-white font-bold text-sm mb-1">KYC Mismatch</div>
+                        <div className="text-on-surface-muted text-sm">Doc scan failed for Acc...</div>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -268,19 +276,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Footer Bar */}
-      <footer className="h-12 border-t border-border flex items-center justify-between px-6 font-mono text-[10px] uppercase tracking-widest text-on-surface-muted bg-background">
-        <div className="flex items-center gap-6">
-          <span>FRAUDOPS SYSTEM V2.4.0</span>
-          <span className="text-tertiary border-b border-tertiary pb-[1px] cursor-pointer">SESSION DATA</span>
-          <span className="hover:text-white cursor-pointer transition-colors">NETWORK LATENCY</span>
-          <span className="hover:text-white cursor-pointer transition-colors">PRIVACY PROTOCOL</span>
-        </div>
-        <div className="flex gap-6">
-          <span className="text-on-surface-muted">PREVENTED: <span className="text-tertiary">{fraudPreventedFormatted}</span></span>
-          <span>FP RATE: <span className="text-white">{sessionState.falsePositiveRate || 1.2}%</span></span>
-        </div>
-      </footer>
+      <Footer showStats />
     </div>
   );
 }

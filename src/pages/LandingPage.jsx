@@ -1,10 +1,99 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Button from '../components/Button';
 import Card from '../components/Card';
 
 export default function LandingPage() {
+  const [activeModal, setActiveModal] = useState(null);
+
+  const renderModal = () => {
+    if (!activeModal) return null;
+    
+    let title = "";
+    let content = null;
+    
+    switch(activeModal) {
+      case 'rules':
+        title = "HOW IT WORKS";
+        content = (
+          <div className="space-y-4 text-sm text-on-surface-muted leading-relaxed">
+            <p><strong className="text-white">OBJECTIVE:</strong> You are a FraudOps operative. Your mission is to analyze incoming transaction streams and identify malicious activity before it affects the network.</p>
+            <p><strong className="text-white">ACTIONS:</strong></p>
+            <ul className="list-disc pl-5 space-y-3">
+              <li><span className="text-primary font-bold px-2 py-0.5 bg-primary/10 border border-primary/30 mr-2">FREEZE</span> Total account lockdown. Use for high-confidence threats (e.g., botnets, synthetic identity rings).</li>
+              <li><span className="text-secondary font-bold px-2 py-0.5 bg-secondary/10 border border-secondary/30 mr-2">STEP-UP AUTH</span> Trigger multi-factor challenge. Use for anomalous but potentially legitimate activity (e.g., new device, travel).</li>
+              <li><span className="text-tertiary font-bold px-2 py-0.5 bg-tertiary/10 border border-tertiary/30 mr-2">CLEAR</span> Allow transaction. Use for verified false positives or baseline recurring transfers.</li>
+              <li><span className="text-primary font-bold px-2 py-0.5 bg-primary/10 border border-primary/30 mr-2">ESCALATE</span> Send to L3 FinCEN unit. Use for complex multi-hop laundering and structuring.</li>
+            </ul>
+            <p className="pt-2"><strong className="text-white">SCORING:</strong> Correct decisions award <span className="text-tertiary font-bold">+100 points</span> and build your streak. Incorrect decisions deduct <span className="text-primary font-bold">-150 points</span> and break your streak.</p>
+          </div>
+        );
+        break;
+      case 'session':
+        title = "SESSION DATA";
+        content = <p className="text-sm text-on-surface-muted leading-relaxed">No active session found. Please enter the operations dashboard to initialize a new tracking session.</p>;
+        break;
+      case 'network':
+        title = "NETWORK LATENCY";
+        // Simulate dynamic pings based on current time to make it look alive, picking a "local" server
+        const nowMs = Date.now();
+        const basePing = (nowMs % 20) + 8; // Random ping between 8 and 27
+        const server2Ping = (nowMs % 40) + 60; // 60-100
+        const server3Ping = (nowMs % 100) + 120; // 120-220
+        
+        content = (
+          <div className="space-y-3 font-mono text-sm">
+            <div className="flex justify-between border-b border-border pb-2">
+              <span className="text-on-surface-muted flex items-center gap-2"><span className="w-1.5 h-1.5 bg-tertiary rounded-full animate-pulse"></span> ASIA-SOUTH-1 (LOCAL)</span>
+              <span className="text-tertiary font-bold">{basePing}ms</span>
+            </div>
+            <div className="flex justify-between border-b border-border pb-2">
+              <span className="text-on-surface-muted flex items-center gap-2"><span className="w-1.5 h-1.5 bg-primary rounded-full"></span> US-EAST-1</span>
+              <span className="text-white font-bold">{server3Ping}ms</span>
+            </div>
+            <div className="flex justify-between border-b border-border pb-2">
+              <span className="text-on-surface-muted flex items-center gap-2"><span className="w-1.5 h-1.5 bg-secondary rounded-full"></span> EU-WEST-1</span>
+              <span className="text-white font-bold">{server2Ping}ms</span>
+            </div>
+            <div className="mt-6 pt-2 text-xs text-tertiary font-bold animate-pulse flex items-center gap-2">
+              <span className="w-2 h-2 bg-tertiary rounded-full"></span> CONNECTED TO OPTIMAL NODE
+            </div>
+          </div>
+        );
+        break;
+      case 'privacy':
+        title = "PRIVACY PROTOCOL";
+        content = <p className="text-sm text-on-surface-muted leading-relaxed">All operative metrics are end-to-end encrypted. FraudOps adheres strictly to global data protection regulations. Unauthorized access to the ops portal is strictly prohibited and logged by our internal security mainframe.</p>;
+        break;
+      default:
+        return null;
+    }
+    
+    return (
+      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-[fadeIn_0.2s_ease-out]">
+        <div className="bg-surface border border-border w-full max-w-lg shadow-[0_0_30px_rgba(0,0,0,0.8)] relative">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-secondary to-tertiary"></div>
+          <div className="p-8">
+            <div className="flex justify-between items-center mb-6 border-b border-border pb-4">
+              <h2 className="font-headline font-bold text-2xl tracking-widest uppercase text-white">{title}</h2>
+              <button onClick={() => setActiveModal(null)} className="text-on-surface-muted hover:text-white transition-colors">
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            {content}
+            <div className="mt-8 flex justify-end">
+              <Button variant="outlineSecondary" onClick={() => setActiveModal(null)} className="text-xs px-6 py-2 font-mono uppercase tracking-widest">ACKNOWLEDGE</Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-background font-body text-on-surface overflow-x-hidden relative">
+      {renderModal()}
+
       {/* Background Texture for Hero */}
       <div className="absolute top-0 left-0 w-full h-[800px] overflow-hidden opacity-20 pointer-events-none z-0">
         <div className="w-full h-full grid grid-cols-3 grid-rows-3 gap-8 p-8 opacity-30 transform scale-150">
@@ -20,15 +109,7 @@ export default function LandingPage() {
 
       {/* Nav */}
       <nav className="p-6 flex justify-between items-center relative z-10 w-full max-w-7xl mx-auto">
-        <div className="text-primary font-headline font-bold italic tracking-widest text-sm text-glitch">FRAUDOPS</div>
-        <div className="flex items-center gap-6 text-on-surface-muted">
-          <span className="material-symbols-outlined hover:text-white cursor-pointer transition-colors text-lg">monitoring</span>
-          <span className="material-symbols-outlined hover:text-white cursor-pointer transition-colors text-lg">sports_esports</span>
-          <span className="material-symbols-outlined hover:text-white cursor-pointer transition-colors text-lg">account_balance_wallet</span>
-          <div className="w-8 h-8 rounded-full bg-surface-dim border border-border overflow-hidden cursor-pointer hover:border-primary transition-colors flex items-center justify-center">
-             <span className="material-symbols-outlined text-sm">person</span>
-          </div>
-        </div>
+        <div className="text-primary font-headline font-bold italic tracking-widest text-sm">FRAUDOPS</div>
       </nav>
 
       <main className="w-full max-w-7xl mx-auto px-6 relative z-10">
@@ -39,7 +120,7 @@ export default function LandingPage() {
               Real-Time Fraud Operations Simulator
             </div>
             
-            <h1 className="text-7xl lg:text-8xl font-headline font-black italic tracking-tighter text-glitch text-white">
+            <h1 className="text-7xl lg:text-8xl font-headline font-black italic tracking-tighter text-white">
               FRAUDOPS
             </h1>
             
@@ -55,36 +136,56 @@ export default function LandingPage() {
                   [ ENTER THE OPS ] <span className="material-symbols-outlined text-sm ml-2">open_in_new</span>
                 </Button>
               </Link>
-              <Button variant="outlineSecondary" className="font-mono text-sm px-8">
+              <Button onClick={() => setActiveModal('rules')} variant="outlineSecondary" className="font-mono text-sm px-8">
                 [ HOW IT WORKS ] <span className="material-symbols-outlined text-sm ml-2">visibility</span>
               </Button>
             </div>
           </div>
           
           <div className="w-full lg:w-[450px]">
-            {/* System Status Card */}
-            <div className="bg-background/80 backdrop-blur-md border border-white/5 shadow-2xl p-8 relative overflow-hidden aspect-square flex flex-col">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-50"></div>
+            {/* Threat Intelligence Radar */}
+            <div className="bg-background/80 backdrop-blur-md border border-primary/20 shadow-[0_0_40px_rgba(226,27,35,0.15)] p-8 relative overflow-hidden aspect-square flex flex-col group hover:border-primary/50 transition-all duration-500">
+              {/* Animated scanning background */}
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(226,27,35,0.05)_0%,transparent_70%)] opacity-50"></div>
+              <div className="absolute inset-0 bg-[linear-gradient(rgba(226,27,35,0.05)_1px,transparent_1px)] bg-[size:100%_4px] pointer-events-none opacity-50"></div>
               
               <div className="flex justify-between items-start relative z-10">
-                <div className="text-tertiary font-mono text-xs font-bold tracking-[0.1em] uppercase">SYS.STATUS: <span className="text-primary">CRITICAL</span></div>
+                <div>
+                  <div className="text-tertiary font-mono text-[10px] font-bold tracking-[0.2em] uppercase mb-1">GLOBAL THREAT MAP</div>
+                  <div className="text-primary font-headline font-black italic tracking-widest text-2xl animate-pulse">DEFCON 2</div>
+                </div>
+                <div className="w-2 h-2 rounded-full bg-primary animate-ping"></div>
               </div>
               
-              <div className="flex-1 flex flex-col justify-center gap-4 relative z-10">
-                {/* Progress bars */}
-                <div className="w-full bg-surface-dim h-2 overflow-hidden">
-                  <div className="bg-primary h-full w-[85%] shadow-[0_0_10px_rgba(226,27,35,0.8)]"></div>
-                </div>
-                <div className="w-[85%] bg-surface-dim h-2 overflow-hidden">
-                  <div className="bg-secondary h-full w-[65%] shadow-[0_0_10px_rgba(161,0,255,0.8)]"></div>
-                </div>
-                <div className="w-[95%] bg-surface-dim h-2 overflow-hidden">
-                  <div className="bg-tertiary h-full w-[90%] shadow-[0_0_10px_rgba(0,245,255,0.8)]"></div>
+              <div className="flex-1 flex items-center justify-center relative z-10 my-4">
+                {/* Radar Circle */}
+                <div className="w-48 h-48 md:w-64 md:h-64 rounded-full border border-primary/30 relative flex items-center justify-center">
+                  <div className="absolute inset-2 rounded-full border border-primary/10 border-dashed animate-[spin_10s_linear_infinite]"></div>
+                  <div className="absolute inset-6 rounded-full border border-primary/20"></div>
+                  <div className="absolute inset-0 rounded-full border-t border-primary animate-[spin_3s_linear_infinite] shadow-[0_0_15px_#E21B23]"></div>
+                  
+                  {/* Radar sweep */}
+                  <div className="absolute top-1/2 left-1/2 w-1/2 h-1/2 origin-top-left bg-gradient-to-br from-primary/40 to-transparent animate-[spin_3s_linear_infinite]" style={{ clipPath: 'polygon(0 0, 100% 0, 100% 100%)' }}></div>
+                  
+                  {/* Blips */}
+                  <div className="absolute top-[20%] left-[30%] w-2 h-2 rounded-full bg-secondary shadow-[0_0_8px_#A100FF] animate-pulse"></div>
+                  <div className="absolute top-[60%] left-[70%] w-1.5 h-1.5 rounded-full bg-tertiary shadow-[0_0_8px_#00F5FF] animate-pulse delay-75"></div>
+                  <div className="absolute top-[75%] left-[25%] w-2.5 h-2.5 rounded-full bg-primary shadow-[0_0_10px_#E21B23] animate-ping"></div>
+                  
+                  {/* Center Node */}
+                  <div className="w-4 h-4 rounded-full bg-white shadow-[0_0_15px_#FFF] relative z-20"></div>
                 </div>
               </div>
               
-              <div className="flex justify-end mt-auto relative z-10">
-                <div className="text-on-surface-muted font-mono text-[10px] tracking-widest">NODE_01 .ACTIVE</div>
+              <div className="grid grid-cols-2 gap-4 relative z-10 mt-auto border-t border-white/10 pt-4">
+                <div>
+                  <div className="font-mono text-[8px] text-on-surface-muted tracking-widest uppercase mb-1">ACTIVE THREATS</div>
+                  <div className="font-headline font-bold text-lg text-white">14,204</div>
+                </div>
+                <div>
+                  <div className="font-mono text-[8px] text-on-surface-muted tracking-widest uppercase mb-1">SYSTEM INTEGRITY</div>
+                  <div className="font-headline font-bold text-lg text-secondary">98.2%</div>
+                </div>
               </div>
             </div>
           </div>
@@ -187,9 +288,9 @@ export default function LandingPage() {
       <footer className="px-6 py-8 border-t border-border flex justify-between text-[10px] tracking-[0.2em] font-mono text-on-surface-muted uppercase relative z-10 bg-background">
         <div>FraudOps System V2.4.0</div>
         <div className="flex gap-6">
-          <span className="hover:text-white cursor-pointer transition-colors">Session Data</span>
-          <span className="hover:text-white cursor-pointer transition-colors">Network Latency</span>
-          <span className="hover:text-white cursor-pointer transition-colors">Privacy Protocol</span>
+          <span onClick={() => setActiveModal('session')} className="hover:text-white cursor-pointer transition-colors">Session Data</span>
+          <span onClick={() => setActiveModal('network')} className="hover:text-white cursor-pointer transition-colors">Network Latency</span>
+          <span onClick={() => setActiveModal('privacy')} className="hover:text-white cursor-pointer transition-colors">Privacy Protocol</span>
         </div>
       </footer>
     </div>

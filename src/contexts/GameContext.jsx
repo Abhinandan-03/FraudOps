@@ -1,24 +1,31 @@
 import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import fraudOpsApi from '../services/fraudOpsApi';
 import { useTheme } from './ThemeContext';
+import { useNotification } from './NotificationContext';
+import { useSettings } from './SettingsContext';
+import { playBackgroundMusic, stopBackgroundMusic, setGameActive } from '../utils/audio';
 
 const GameContext = createContext();
 
 export const GameProvider = ({ children }) => {
   const { triggerSuccessAnimation, triggerFailureAnimation, handleNextCase } = useTheme();
+  const { addNotification } = useNotification();
+  const { settings } = useSettings();
 
   const [currentCase, setCurrentCase] = useState(null);
   const [sessionState, setSessionState] = useState({
-    score: 1240,
-    streak: 3,
+    score: 0,
+    streak: 0,
     difficulty: 'ELITE',
     cryoTokens: 3,
-    casesCompleted: 3,
-    detectionAccuracy: 92.4,
-    falsePositiveRate: 1.2,
+    casesCompleted: 0,
+    detectionAccuracy: 100.0,
+    falsePositiveRate: 0.0,
     avgResponseTime: 1.2,
-    fraudPrevented: 124500,
-    activeCaseId: null
+    fraudPrevented: 0,
+    playerName: (typeof window !== 'undefined' ? localStorage.getItem('fraudOps_currentPlayer') : null) || "Operative_X",
+    activeCaseId: null,
+    outcomes: []
   });
 
   const [lastResult, setLastResult] = useState(null);
@@ -48,6 +55,11 @@ export const GameProvider = ({ children }) => {
           if (caseData) {
             setCurrentCase(caseData);
             caseStartTimeRef.current = Date.now();
+            
+            // Threat Intel Radar Check
+            if (settings?.notifications?.suspiciousActivity && (caseData.threatLevel === 'CRITICAL' || caseData.threatLevel === 'CRITICAL THREAT LEVEL')) {
+              addNotification('threat', 'THREAT INTEL RADAR', `Velocity spike detected on network node. Proceed with extreme caution.`);
+            }
           }
         }
       } catch (err) {
@@ -86,15 +98,27 @@ export const GameProvider = ({ children }) => {
       const result = await fraudOpsApi.submitDecision(currentCase.id, action, { responseTime });
 
       // Update session metrics from backend outcome
-      setSessionState((prev) => ({
-        ...prev,
-        score: result.totalScore !== undefined ? result.totalScore : Math.max(0, prev.score + result.points),
-        streak: result.streak !== undefined ? result.streak : (result.correct ? prev.streak + 1 : 0),
-        casesCompleted: prev.casesCompleted + 1,
-        fraudPrevented: result.correct && currentCase.groundTruth?.fraudAmount 
-          ? prev.fraudPrevented + currentCase.groundTruth.fraudAmount 
-          : prev.fraudPrevented
-      }));
+      setSessionState((prev) => {
+        const newOutcomes = [...(prev.outcomes || []), {
+          caseId: currentCase.id,
+          action,
+          correct: result.correct,
+          points: result.points,
+          responseTime,
+          fraudPrevented: result.correct && currentCase.groundTruth?.fraudAmount ? currentCase.groundTruth.fraudAmount : 0
+        }];
+        
+        return {
+          ...prev,
+          score: result.totalScore !== undefined ? result.totalScore : Math.max(0, prev.score + result.points),
+          streak: result.streak !== undefined ? result.streak : (result.correct ? prev.streak + 1 : 0),
+          casesCompleted: prev.casesCompleted + 1,
+          fraudPrevented: result.correct && currentCase.groundTruth?.fraudAmount 
+            ? prev.fraudPrevented + currentCase.groundTruth.fraudAmount 
+            : prev.fraudPrevented,
+          outcomes: newOutcomes
+        };
+      });
 
       setLastResult(result);
 
@@ -111,6 +135,12 @@ export const GameProvider = ({ children }) => {
           title: 'INCORRECT DECISION',
           subtitle: result.outcome ? result.outcome.toUpperCase() : 'SYSTEM BREACH DETECTED'
         });
+      }
+
+      // Achievement Unlock Check (every 5 streak)
+      const newStreak = result.streak !== undefined ? result.streak : (result.correct ? sessionState.streak + 1 : 0);
+      if (settings?.notifications?.achievements && newStreak > 0 && newStreak % 5 === 0) {
+        addNotification('achievement', 'ACHIEVEMENT UNLOCKED', `Flawless streak x${newStreak} reached! Operational clearance elevated.`);
       }
 
       return result;
@@ -140,6 +170,12 @@ export const GameProvider = ({ children }) => {
       const nextCaseData = await fraudOpsApi.getNextCase(sessionState.difficulty || 'ELITE');
       setCurrentCase(nextCaseData);
       caseStartTimeRef.current = Date.now();
+      
+      // Threat Intel Radar Check
+      if (settings?.notifications?.suspiciousActivity && (nextCaseData.threatLevel === 'CRITICAL' || nextCaseData.threatLevel === 'CRITICAL THREAT LEVEL')) {
+        addNotification('threat', 'THREAT INTEL RADAR', `Velocity spike detected on network node. Proceed with extreme caution.`);
+      }
+      
       return nextCaseData;
     } catch (err) {
       console.error('Error fetching next case:', err);
@@ -176,6 +212,27 @@ export const GameProvider = ({ children }) => {
     }
   }, [handleNextCase]);
 
+  /**
+   * Complete the session and submit results to leaderboard
+   */
+  const completeSession = useCallback(async () => {
+    if (!sessionState.outcomes || sessionState.outcomes.length === 0) return;
+    
+    // Use stored session ID or fallback to a local mock ID
+    const sessionId = sessionState.sessionId || sessionState.activeCaseId || "MOCK_SESSION_" + Date.now();
+    
+    try {
+      await fraudOpsApi.submitSessionResult({
+        session_id: sessionId,
+        player_name: sessionState.playerName,
+        outcomes: sessionState.outcomes,
+        difficulty: sessionState.difficulty || 'ELITE'
+      });
+    } catch (err) {
+      console.error('Error submitting session to leaderboard:', err);
+    }
+  }, [sessionState]);
+
   return (
     <GameContext.Provider value={{
       currentCase,
@@ -186,7 +243,8 @@ export const GameProvider = ({ children }) => {
       error,
       submitAction,
       advanceToNextCase,
-      startNewSession
+      startNewSession,
+      completeSession
     }}>
       {children}
     </GameContext.Provider>

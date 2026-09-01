@@ -3,6 +3,25 @@ from sqlalchemy.orm import relationship
 from .database import Base
 from datetime import datetime, timezone
 
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(String, primary_key=True, index=True)
+    email = Column(String, unique=True, index=True, nullable=False)
+    password_hash = Column(String, nullable=False)
+    username = Column(String, nullable=True)
+    created_at = Column(String, default=lambda: datetime.now(timezone.utc).isoformat())
+    updated_at = Column(String, default=lambda: datetime.now(timezone.utc).isoformat())
+
+class PasswordResetToken(Base):
+    __tablename__ = "password_reset_tokens"
+
+    token = Column(String, primary_key=True, index=True)
+    email = Column(String, index=True, nullable=False)
+    expires_at = Column(String, nullable=False)
+    used = Column(Boolean, default=False)
+    created_at = Column(String, default=lambda: datetime.now(timezone.utc).isoformat())
+
 class Session(Base):
     __tablename__ = "sessions"
 
@@ -12,6 +31,21 @@ class Session(Base):
     streak = Column(Integer, default=0)
     freeze_tokens = Column(Integer, default=3)
     started_at = Column(String, default=lambda: datetime.now(timezone.utc).isoformat())
+
+class LeaderboardRecord(Base):
+    __tablename__ = "leaderboard_records"
+
+    player_name = Column(String, primary_key=True, index=True)
+    score = Column(Integer, default=0) # Represents highest score
+    cases_played = Column(Integer, default=0)
+    correct_decisions = Column(Integer, default=0)
+    accuracy = Column(Float, default=100.0)
+    average_response_time_ms = Column(Float, default=0.0)
+    fraud_prevented = Column(Float, default=0.0)
+    best_streak = Column(Integer, default=0)
+    latest_game_time = Column(String, default=lambda: datetime.now(timezone.utc).isoformat())
+
+
 
 class Transaction(Base):
     __tablename__ = "transactions"

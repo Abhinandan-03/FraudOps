@@ -86,6 +86,12 @@ export default function SpiderSwarmFailureAnimation({
   }, []);
 
   useEffect(() => {
+    if (!isActive) {
+      setStage('idle');
+      isRunningRef.current = false;
+      return;
+    }
+
     if (isActive && !isRunningRef.current) {
       isRunningRef.current = true;
       setStage('spider-drop');
@@ -131,7 +137,7 @@ export default function SpiderSwarmFailureAnimation({
 
   return (
     <div 
-      className={`fixed inset-0 z-50 pointer-events-none flex items-center justify-center transition-opacity duration-300 ${
+      className={`fixed inset-0 z-50 pointer-events-none flex items-center justify-center transition-opacity duration-300 force-prowler-theme ${
         stage === 'exit' ? 'opacity-0' : 'opacity-100'
       }`}
       aria-live="assertive"

@@ -71,6 +71,26 @@ class MetricsOut(BaseModel):
 class LeaderboardEntry(BaseModel):
     player_name: str
     score: int
-    streak: int
+    streak: int = 0
     accuracy: float
     average_response_time_ms: float
+    cases_played: int = 0
+    correct_decisions: int = 0
+    fraud_prevented: float = 0.0
+    best_streak: int = 0
+    latest_game_time: Optional[str] = None
+
+class CaseOutcome(BaseModel):
+    caseId: str
+    action: str
+    correct: bool
+    points: int
+    responseTime: float
+    fraudPrevented: float = 0.0
+
+class SessionSubmission(BaseModel):
+    session_id: str
+    player_name: str
+    outcomes: List[CaseOutcome]
+    difficulty: str = "ELITE"
+

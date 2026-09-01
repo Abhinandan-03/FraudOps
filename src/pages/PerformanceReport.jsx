@@ -1,9 +1,19 @@
 import { Link, useNavigate } from 'react-router-dom';
+import { useEffect, useRef } from 'react';
 import { useGame } from '../contexts/GameContext';
 
 export default function PerformanceReport() {
   const navigate = useNavigate();
-  const { sessionState, startNewSession } = useGame();
+  const { sessionState, startNewSession, completeSession } = useGame();
+  
+  const hasSubmitted = useRef(false);
+
+  useEffect(() => {
+    if (!hasSubmitted.current) {
+      hasSubmitted.current = true;
+      completeSession();
+    }
+  }, [completeSession]);
 
   const finalScore = Number(sessionState.score || 8420).toLocaleString('en-US');
   const detectionAcc = sessionState.detectionAccuracy || 92;

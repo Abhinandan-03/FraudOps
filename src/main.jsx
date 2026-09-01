@@ -4,13 +4,19 @@ import App from './App.jsx'
 import './index.css'
 import { ThemeProvider } from './contexts/ThemeContext'
 import { GameProvider } from './contexts/GameContext'
+import { SettingsProvider } from './contexts/SettingsContext'
+import { NotificationProvider } from './contexts/NotificationContext'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <ThemeProvider>
-      <GameProvider>
-        <App />
-      </GameProvider>
-    </ThemeProvider>
+    <SettingsProvider>
+      <NotificationProvider>
+        <ThemeProvider>
+          <GameProvider>
+            <App />
+          </GameProvider>
+        </ThemeProvider>
+      </NotificationProvider>
+    </SettingsProvider>
   </React.StrictMode>,
 )

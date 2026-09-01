@@ -1,16 +1,49 @@
+import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useGame } from '../contexts/GameContext';
+import { useSettings } from '../contexts/SettingsContext';
+import { useNotification } from '../contexts/NotificationContext';
+import fraudOpsApi from '../services/fraudOpsApi';
 
 export default function Leaderboard() {
   const navigate = useNavigate();
   const { sessionState } = useGame();
+  const { settings } = useSettings();
+  const { addNotification } = useNotification();
+  
+  const [leaderboardData, setLeaderboardData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const previousRankRef = useRef(null);
 
-  const userScore = (84000 + (sessionState.score || 1240)).toLocaleString('en-US');
-  const userAcc = `${sessionState.detectionAccuracy || 93.8}%`;
-  const userResp = `${sessionState.avgResponseTime || 1.1}s`;
-  const userPrevented = sessionState.fraudPrevented 
-    ? `$${(sessionState.fraudPrevented / 1000000).toFixed(1)}M`
-    : '$5.1M';
+  useEffect(() => {
+    let mounted = true;
+    async function loadData() {
+      try {
+        const data = await fraudOpsApi.getLeaderboard();
+        if (mounted && data) {
+          setLeaderboardData(data);
+          
+          if (settings?.notifications?.leaderboardUpdates && sessionState?.playerName) {
+            const currentRank = data.findIndex(p => p.player_name === sessionState.playerName) + 1;
+            
+            if (currentRank > 0) {
+              if (previousRankRef.current && currentRank > previousRankRef.current) {
+                // Rank dropped
+                addNotification('leaderboard', 'LEADERBOARD SHIFT', `Alert: You have been displaced in the rankings. Current rank: ${currentRank}.`);
+              }
+              previousRankRef.current = currentRank;
+            }
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load leaderboard:", err);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    }
+    loadData();
+    return () => { mounted = false; };
+  }, [sessionState.playerName, settings?.notifications?.leaderboardUpdates, addNotification]);
 
   return (
     <div className="min-h-screen bg-background font-body text-on-surface flex flex-col h-screen overflow-hidden">
@@ -50,7 +83,7 @@ export default function Leaderboard() {
               Archive
             </div>
             <div 
-              onClick={() => navigate('/performance-report')}
+              onClick={() => navigate('/network')}
               className="text-on-surface-muted py-4 px-6 flex items-center gap-4 cursor-pointer hover:text-white transition-colors"
             >
               <span className="material-symbols-outlined text-[18px]">hub</span>
@@ -75,7 +108,7 @@ export default function Leaderboard() {
             <div className="flex items-center gap-12">
               <div 
                 onClick={() => navigate('/dashboard')}
-                className="text-primary font-headline font-black italic tracking-tighter text-4xl text-glitch cursor-pointer"
+                className="text-primary font-headline font-black italic tracking-tighter text-4xl cursor-pointer"
               >
                 FRAUDOPS
               </div>
@@ -120,103 +153,78 @@ export default function Leaderboard() {
 
               {/* Table Body */}
               <div className="flex flex-col gap-2">
-                
-                {/* Row 1 */}
-                <div className="grid grid-cols-[100px_1fr_120px_120px_120px_150px] gap-4 px-6 py-5 items-center bg-surface-dim/50 border-b border-border/50 hover:bg-surface-dim transition-colors">
-                  <div className="font-headline font-black italic text-3xl text-secondary">01</div>
-                  <div className="flex items-center gap-3">
-                    <span className="material-symbols-outlined text-secondary bg-secondary/10 p-1.5 border border-secondary/30">sports_esports</span>
-                    <div>
-                      <div className="text-white font-bold text-sm mb-0.5 flex items-center gap-2">Ghost_Protocol <span className="material-symbols-outlined text-[14px] text-secondary">verified</span></div>
-                      <div className="font-mono text-[8px] tracking-widest uppercase text-on-surface-muted">ELITE TIER</div>
-                    </div>
+                {loading ? (
+                  <div className="py-8 text-center text-on-surface-muted font-mono uppercase tracking-widest text-xs">
+                    ACCESSING REGISTRY...
                   </div>
-                  <div className="text-right font-mono text-tertiary font-bold">99,842</div>
-                  <div className="text-right font-mono text-white text-xs">98.4%</div>
-                  <div className="text-right font-mono text-white text-xs">0.4s</div>
-                  <div className="text-right font-mono text-white text-xs">$12.4M</div>
-                </div>
-
-                {/* Row 2 */}
-                <div className="grid grid-cols-[100px_1fr_120px_120px_120px_150px] gap-4 px-6 py-5 items-center bg-surface-dim/50 border-b border-border/50 hover:bg-surface-dim transition-colors">
-                  <div className="font-headline font-black italic text-3xl text-secondary">02</div>
-                  <div className="flex items-center gap-3">
-                    <span className="material-symbols-outlined text-secondary bg-secondary/10 p-1.5 border border-secondary/30">security</span>
-                    <div>
-                      <div className="text-white font-bold text-sm mb-0.5 flex items-center gap-2">Cipher_Strike <span className="material-symbols-outlined text-[14px] text-secondary">verified</span></div>
-                      <div className="font-mono text-[8px] tracking-widest uppercase text-on-surface-muted">ELITE TIER</div>
-                    </div>
+                ) : leaderboardData.length === 0 ? (
+                  <div className="py-12 flex flex-col items-center justify-center border border-dashed border-border/50 bg-surface-dim/30">
+                    <span className="material-symbols-outlined text-4xl text-on-surface-muted mb-4">search_off</span>
+                    <h3 className="text-white font-headline font-bold text-xl uppercase mb-2">NO RECORDS FOUND</h3>
+                    <p className="text-on-surface-muted font-mono text-xs max-w-md text-center">
+                      The leaderboard is currently empty. Play your first case to enter the leaderboard and establish your operative ranking.
+                    </p>
+                    <button 
+                      onClick={() => navigate('/investigation')}
+                      className="mt-6 px-6 py-2 bg-secondary text-white font-bold text-xs font-mono uppercase tracking-widest shadow-[0_0_15px_rgba(161,0,255,0.3)] hover:bg-secondary/90"
+                    >
+                      BEGIN INVESTIGATION
+                    </button>
                   </div>
-                  <div className="text-right font-mono text-tertiary font-bold">95,128</div>
-                  <div className="text-right font-mono text-white text-xs">97.1%</div>
-                  <div className="text-right font-mono text-white text-xs">0.6s</div>
-                  <div className="text-right font-mono text-white text-xs">$10.1M</div>
-                </div>
+                ) : (
+                  leaderboardData.map((player, index) => {
+                    const isActiveUser = sessionState?.playerName === player.player_name;
+                    const rank = (index + 1).toString().padStart(2, '0');
+                    const score = (player.score || 0).toLocaleString('en-US');
+                    const acc = `${(player.accuracy || 100).toFixed(1)}%`;
+                    const resp = `${((player.average_response_time_ms || 1200) / 1000).toFixed(1)}s`;
+                    const prev = player.fraud_prevented 
+                      ? `$${(player.fraud_prevented / 1000000).toFixed(1)}M`
+                      : '$0.0M';
 
-                {/* Row 3 */}
-                <div className="grid grid-cols-[100px_1fr_120px_120px_120px_150px] gap-4 px-6 py-5 items-center bg-surface-dim/50 border-b border-border/50 hover:bg-surface-dim transition-colors">
-                  <div className="font-headline font-black italic text-3xl text-secondary">03</div>
-                  <div className="flex items-center gap-3">
-                    <span className="material-symbols-outlined text-secondary bg-secondary/10 p-1.5 border border-secondary/30">memory</span>
-                    <div>
-                      <div className="text-white font-bold text-sm mb-0.5 flex items-center gap-2">Null_Pointer <span className="material-symbols-outlined text-[14px] text-secondary">verified</span></div>
-                      <div className="font-mono text-[8px] tracking-widest uppercase text-on-surface-muted">ELITE TIER</div>
-                    </div>
-                  </div>
-                  <div className="text-right font-mono text-tertiary font-bold">92,488</div>
-                  <div className="text-right font-mono text-white text-xs">96.5%</div>
-                  <div className="text-right font-mono text-white text-xs">0.7s</div>
-                  <div className="text-right font-mono text-white text-xs">$8.9M</div>
-                </div>
+                    if (isActiveUser) {
+                      return (
+                        <Link to="/performance-report" key={player.player_name}>
+                          <div className="grid grid-cols-[100px_1fr_120px_120px_120px_150px] gap-4 px-6 py-5 items-center bg-primary/5 border border-primary relative shadow-[0_0_20px_rgba(226,27,35,0.15)] group cursor-pointer hover:bg-primary/10 transition-colors my-2">
+                            <div className="absolute top-0 left-0 w-1.5 h-full bg-primary shadow-[0_0_10px_#E21B23]"></div>
+                            <div className="font-headline font-black italic text-3xl text-primary pl-2">{rank}</div>
+                            <div className="flex items-center gap-3">
+                              <span className="material-symbols-outlined text-primary border border-primary p-1.5">person</span>
+                              <div>
+                                <div className="text-white font-bold text-sm mb-0.5 group-hover:text-primary transition-colors">You ({player.player_name})</div>
+                                <div className="font-mono text-[8px] tracking-widest uppercase text-white font-bold">ACTIVE SESSION</div>
+                              </div>
+                            </div>
+                            <div className="text-right font-mono text-tertiary font-bold">{score}</div>
+                            <div className="text-right font-mono text-white text-xs font-bold">{acc}</div>
+                            <div className="text-right font-mono text-white text-xs font-bold">{resp}</div>
+                            <div className="text-right font-mono text-white text-xs font-bold">{prev}</div>
+                            
+                            {/* Glowing crosshair line */}
+                            <div className="absolute top-1/2 left-0 w-[150vw] h-[1px] bg-primary/30 pointer-events-none -translate-y-1/2 z-[-1] -translate-x-[20vw]"></div>
+                          </div>
+                        </Link>
+                      );
+                    }
 
-                {/* Row 4 */}
-                <div className="grid grid-cols-[100px_1fr_120px_120px_120px_150px] gap-4 px-6 py-5 items-center border-b border-border/50 hover:bg-surface-dim transition-colors">
-                  <div className="font-mono font-bold text-sm text-on-surface-muted pl-1">04</div>
-                  <div className="flex items-center gap-3">
-                    <span className="material-symbols-outlined text-on-surface-muted bg-surface-dim p-1.5 border border-border">code</span>
-                    <div className="text-white font-bold text-sm">Byte_Me</div>
-                  </div>
-                  <div className="text-right font-mono text-on-surface-muted font-bold">88,105</div>
-                  <div className="text-right font-mono text-on-surface-muted text-xs">94.2%</div>
-                  <div className="text-right font-mono text-on-surface-muted text-xs">0.9s</div>
-                  <div className="text-right font-mono text-on-surface-muted text-xs">$6.2M</div>
-                </div>
-
-                {/* Row 5 - Active User */}
-                <Link to="/performance-report">
-                  <div className="grid grid-cols-[100px_1fr_120px_120px_120px_150px] gap-4 px-6 py-5 items-center bg-primary/5 border border-primary relative shadow-[0_0_20px_rgba(226,27,35,0.15)] group cursor-pointer hover:bg-primary/10 transition-colors my-2">
-                    <div className="absolute top-0 left-0 w-1.5 h-full bg-primary shadow-[0_0_10px_#E21B23]"></div>
-                    <div className="font-headline font-black italic text-3xl text-primary pl-2">05</div>
-                    <div className="flex items-center gap-3">
-                      <span className="material-symbols-outlined text-primary border border-primary p-1.5">person</span>
-                      <div>
-                        <div className="text-white font-bold text-sm mb-0.5 group-hover:text-primary transition-colors">You (Operative_X)</div>
-                        <div className="font-mono text-[8px] tracking-widest uppercase text-white font-bold">ACTIVE SESSION</div>
+                    return (
+                      <div key={player.player_name} className="grid grid-cols-[100px_1fr_120px_120px_120px_150px] gap-4 px-6 py-5 items-center bg-surface-dim/50 border-b border-border/50 hover:bg-surface-dim transition-colors">
+                        <div className="font-headline font-black italic text-3xl text-secondary">{rank}</div>
+                        <div className="flex items-center gap-3">
+                          <span className="material-symbols-outlined text-secondary bg-secondary/10 p-1.5 border border-secondary/30">sports_esports</span>
+                          <div>
+                            <div className="text-white font-bold text-sm mb-0.5 flex items-center gap-2">{player.player_name}</div>
+                            <div className="font-mono text-[8px] tracking-widest uppercase text-on-surface-muted">OPERATIVE</div>
+                          </div>
+                        </div>
+                        <div className="text-right font-mono text-tertiary font-bold">{score}</div>
+                        <div className="text-right font-mono text-white text-xs">{acc}</div>
+                        <div className="text-right font-mono text-white text-xs">{resp}</div>
+                        <div className="text-right font-mono text-white text-xs">{prev}</div>
                       </div>
-                    </div>
-                    <div className="text-right font-mono text-tertiary font-bold">{userScore}</div>
-                    <div className="text-right font-mono text-white text-xs font-bold">{userAcc}</div>
-                    <div className="text-right font-mono text-white text-xs font-bold">{userResp}</div>
-                    <div className="text-right font-mono text-white text-xs font-bold">{userPrevented}</div>
-                    
-                    {/* Glowing crosshair line */}
-                    <div className="absolute top-1/2 left-0 w-[150vw] h-[1px] bg-primary/30 pointer-events-none -translate-y-1/2 z-[-1] -translate-x-[20vw]"></div>
-                  </div>
-                </Link>
-
-                {/* Row 6 */}
-                <div className="grid grid-cols-[100px_1fr_120px_120px_120px_150px] gap-4 px-6 py-5 items-center hover:bg-surface-dim transition-colors">
-                  <div className="font-mono font-bold text-sm text-on-surface-muted pl-1">06</div>
-                  <div className="flex items-center gap-3">
-                    <span className="material-symbols-outlined text-on-surface-muted bg-surface-dim p-1.5 border border-border">dns</span>
-                    <div className="text-white font-bold text-sm">Data_Scrap</div>
-                  </div>
-                  <div className="text-right font-mono text-on-surface-muted font-bold">79,900</div>
-                  <div className="text-right font-mono text-on-surface-muted text-xs">91.0%</div>
-                  <div className="text-right font-mono text-on-surface-muted text-xs">1.4s</div>
-                  <div className="text-right font-mono text-on-surface-muted text-xs">$3.8M</div>
-                </div>
-
+                    );
+                  })
+                )}
               </div>
 
             </div>

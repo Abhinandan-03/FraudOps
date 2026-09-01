@@ -2,10 +2,65 @@
 @tailwind components;
 @tailwind utilities;
 
+:root, [data-theme="miles"] {
+  --color-primary: #E21B23;
+  --color-secondary: #A100FF;
+  --color-tertiary: #00F5FF;
+  --glow-primary: rgba(226, 27, 35, 0.2);
+  --glow-primary-strong: rgba(226, 27, 35, 0.6);
+  --glow-secondary: rgba(161, 0, 255, 0.2);
+}
+
+[data-theme="prowler"] {
+  --color-primary: #A100FF;
+  --color-secondary: #E21B23;
+  --color-tertiary: #39FF14;
+  --glow-primary: rgba(161, 0, 255, 0.2);
+  --glow-primary-strong: rgba(161, 0, 255, 0.6);
+  --glow-secondary: rgba(226, 27, 35, 0.2);
+}
+
+/* Situational Gameplay states */
+body[data-app-state="PROWLER_ALERT"], body[data-app-state="PROWLER_FAILURE"] {
+  --color-primary: #A100FF;
+  --color-secondary: #E21B23;
+  --color-tertiary: #39FF14;
+  --glow-primary: rgba(161, 0, 255, 0.2);
+  --glow-primary-strong: rgba(161, 0, 255, 0.6);
+  --glow-secondary: rgba(226, 27, 35, 0.2);
+}
+
+body[data-app-state="MILES_SUCCESS"] {
+  --color-primary: #E21B23;
+  --color-secondary: #A100FF;
+  --color-tertiary: #00F5FF;
+  --glow-primary: rgba(226, 27, 35, 0.2);
+  --glow-primary-strong: rgba(226, 27, 35, 0.6);
+  --glow-secondary: rgba(161, 0, 255, 0.2);
+}
+
+.force-miles-theme {
+  --color-primary: #E21B23 !important;
+  --color-secondary: #A100FF !important;
+  --color-tertiary: #00F5FF !important;
+  --glow-primary: rgba(226, 27, 35, 0.2) !important;
+  --glow-primary-strong: rgba(226, 27, 35, 0.6) !important;
+  --glow-secondary: rgba(161, 0, 255, 0.2) !important;
+}
+
+.force-prowler-theme {
+  --color-primary: #A100FF !important;
+  --color-secondary: #E21B23 !important;
+  --color-tertiary: #39FF14 !important;
+  --glow-primary: rgba(161, 0, 255, 0.2) !important;
+  --glow-primary-strong: rgba(161, 0, 255, 0.6) !important;
+  --glow-secondary: rgba(226, 27, 35, 0.2) !important;
+}
+
 @layer base {
   body {
     background-color: #0A0A0C;
-    background-image: radial-gradient(circle at 50% 50%, rgba(226, 27, 35, 0.05) 0%, transparent 100%),
+    background-image: radial-gradient(circle at 50% 50%, var(--glow-primary) 0%, transparent 100%),
                       linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
                       linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
     background-size: 100% 100%, 8px 8px, 8px 8px;
@@ -26,13 +81,13 @@
 
   /* Specific Glowing Borders */
   .border-glow-primary {
-    box-shadow: 0 0 10px rgba(226, 27, 35, 0.2), inset 0 0 5px rgba(226, 27, 35, 0.1);
-    border-color: #E21B23;
+    box-shadow: 0 0 10px var(--glow-primary), inset 0 0 5px var(--glow-primary);
+    border-color: var(--color-primary);
   }
   
   .border-glow-secondary {
-    box-shadow: 0 0 10px rgba(161, 0, 255, 0.2), inset 0 0 5px rgba(161, 0, 255, 0.1);
-    border-color: #A100FF;
+    box-shadow: 0 0 10px var(--glow-secondary), inset 0 0 5px var(--glow-secondary);
+    border-color: var(--color-secondary);
   }
 
   /* Base Card Styles */
@@ -45,7 +100,7 @@
   /* Glitch Text Effect */
   .text-glitch {
     position: relative;
-    text-shadow: 2px 2px #E21B23, -2px -2px #00F5FF;
+    text-shadow: 2px 2px var(--color-primary), -2px -2px var(--color-tertiary);
   }
 
   /* Custom Range Slider Thumb */
@@ -65,7 +120,7 @@
     -webkit-appearance: none;
     height: 16px;
     width: 8px;
-    background: #E21B23;
+    background: var(--color-primary);
     margin-top: -6px;
     transform: skewX(-15deg);
     cursor: pointer;
@@ -249,5 +304,24 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #E21B23;
+  background: var(--color-primary);
+}
+
+/* REDUCE MOTION PROFILES */
+body[data-reduce-motion="true"] *,
+body[data-reduce-motion="true"] *::before,
+body[data-reduce-motion="true"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

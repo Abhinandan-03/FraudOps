@@ -25,6 +25,12 @@ export default function MilesSuccessAnimation({
   const isRunningRef = useRef(false);
 
   useEffect(() => {
+    if (!isActive) {
+      setPhase('idle');
+      isRunningRef.current = false;
+      return;
+    }
+
     if (isActive && !isRunningRef.current) {
       isRunningRef.current = true;
       setPhase('enter');
@@ -61,7 +67,7 @@ export default function MilesSuccessAnimation({
 
   return (
     <div 
-      className={`fixed inset-0 z-50 pointer-events-none flex items-center justify-center transition-opacity duration-300 ${
+      className={`fixed inset-0 z-50 pointer-events-none flex items-center justify-center transition-opacity duration-300 force-miles-theme ${
         phase === 'exit' ? 'opacity-0' : 'opacity-100'
       }`}
       aria-live="assertive"

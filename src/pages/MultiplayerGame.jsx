@@ -1,22 +1,27 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useGame } from '../contexts/GameContext';
-import { useSettings } from '../contexts/SettingsContext';
 import Footer from '../components/Footer';
 import { calculateNetworkScore } from '../utils/networkScoring';
+import AbortModal from '../components/AbortModal';
+import { logoutUser } from '../utils/auth';
+import { useSettings } from '../contexts/SettingsContext';
 import { playBackgroundMusic } from '../utils/audio';
 
-export default function Investigation() {
+export default function MultiplayerGame({ mp, playerId }) {
   const navigate = useNavigate();
-  const { currentCase, isSubmitting, isLoadingCase, submitAction, sessionState, advanceToNextCase } = useGame();
-  const { settings } = useSettings();
+  const { currentCase, submitDecision, roomState } = mp;
   const [selectedAction, setSelectedAction] = useState(null);
+  const [isAbortModalOpen, setIsAbortModalOpen] = useState(false);
+
+  const me = roomState?.players?.find(p => p.id === playerId);
+  const isSubmitting = me?.action != null;
+  const { settings } = useSettings();
 
   useEffect(() => {
     playBackgroundMusic();
   }, []);
 
-  const handleDecision = async (action) => {
+  const handleDecision = (action) => {
     if (isSubmitting || !currentCase) return;
 
     if (action === 'FREEZE' && settings.confirmBeforeFreeze) {
@@ -26,22 +31,7 @@ export default function Investigation() {
     }
 
     setSelectedAction(action);
-
-    const result = await submitAction(action);
-    if (result) {
-      if (settings.autoAdvance) {
-        setTimeout(() => {
-          advanceToNextCase();
-          setSelectedAction(null);
-        }, settings.animationsEnabled ? 2200 : 800);
-      } else {
-        if (result.correct) {
-          navigate('/success');
-        } else {
-          navigate('/failure');
-        }
-      }
-    }
+    submitDecision(action);
   };
 
   const caseData = currentCase || {
@@ -91,25 +81,28 @@ export default function Investigation() {
           
           <nav className="flex-1 flex flex-col mt-4">
             <div 
-              onClick={() => navigate('/dashboard')}
+              onClick={() => setIsAbortModalOpen(true)}
               className="text-on-surface-muted py-4 px-6 flex items-center gap-4 cursor-pointer hover:text-white transition-colors"
             >
               <span className="material-symbols-outlined text-[18px]">radio_button_checked</span>
               Live Stream
             </div>
-            <div className="bg-secondary text-white py-3 px-6 flex items-center gap-4 cursor-pointer font-bold shadow-[0_0_15px_rgba(161,0,255,0.3)]">
+            <div 
+              onClick={() => setIsAbortModalOpen(true)}
+              className="bg-secondary text-white py-3 px-6 flex items-center gap-4 cursor-pointer font-bold shadow-[0_0_15px_rgba(161,0,255,0.3)]"
+            >
               <span className="material-symbols-outlined text-[18px]">analytics</span>
               Analysis
             </div>
             <div 
-              onClick={() => navigate('/leaderboard')}
+              onClick={() => setIsAbortModalOpen(true)}
               className="text-on-surface-muted py-4 px-6 flex items-center gap-4 cursor-pointer hover:text-white transition-colors"
             >
               <span className="material-symbols-outlined text-[18px]">history</span>
               Archive
             </div>
             <div 
-              onClick={() => navigate('/network')}
+              onClick={() => setIsAbortModalOpen(true)}
               className="text-on-surface-muted py-4 px-6 flex items-center gap-4 cursor-pointer hover:text-white transition-colors"
             >
               <span className="material-symbols-outlined text-[18px]">hub</span>
@@ -121,11 +114,34 @@ export default function Investigation() {
             <div className="bg-surface border border-border p-3 flex flex-col gap-1 mb-3">
               <div className="flex justify-between font-mono text-[9px] text-on-surface-muted">
                 <span>OPERATIVE SCORE</span>
-                <span className="text-white font-bold">{sessionState.score}</span>
+                <span className="text-white font-bold">{me?.score || 0}</span>
               </div>
               <div className="flex justify-between font-mono text-[9px] text-on-surface-muted">
                 <span>STREAK</span>
-                <span className="text-secondary font-bold">x{sessionState.streak}</span>
+                <span className="text-secondary font-bold">x{me?.streak || 0}</span>
+              </div>
+            </div>
+            
+            {/* Live Player Scoreboard */}
+            <div className="mt-6 border-t border-border pt-4">
+              <div className="font-mono text-[9px] text-on-surface-muted mb-3 uppercase tracking-widest">
+                LIVE SQUAD STATUS
+              </div>
+              <div className="flex flex-col gap-2">
+                {roomState?.players.map(p => (
+                  <div key={p.id} className="flex items-center justify-between font-mono text-[10px]">
+                    <div className="flex items-center gap-2">
+                      <span className={`w-2 h-2 rounded-full ${p.action ? 'bg-primary animate-pulse shadow-[0_0_5px_#E21B23]' : 'bg-surface-dim border border-border'}`}></span>
+                      <span className={`uppercase ${p.id === playerId ? 'text-secondary font-bold' : 'text-on-surface-muted'}`}>
+                        {p.name.substring(0, 10)}
+                      </span>
+                    </div>
+                    <div className="flex gap-2">
+                      <span className="text-white">{p.score}</span>
+                      <span className="text-tertiary">🔥{p.streak}</span>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -138,15 +154,17 @@ export default function Investigation() {
           <header className="h-16 flex items-center justify-between px-8 bg-background relative z-10 border-b border-border">
             <div className="flex items-center gap-8">
               <div 
-                onClick={() => navigate('/dashboard')}
+                onClick={() => setIsAbortModalOpen(true)}
                 className="text-primary font-headline font-bold italic tracking-widest text-sm cursor-pointer"
               >
                 FRAUDOPS
               </div>
               <div className="hidden md:flex items-center gap-4 font-mono text-[10px] text-on-surface-muted">
-                <span>SCORE: <strong className="text-white">{sessionState.score}</strong></span>
+                <span>SCORE: <strong className="text-white">{me?.score || 0}</strong></span>
                 <span className="text-border">|</span>
-                <span>STREAK: <strong className="text-secondary">x{sessionState.streak}</strong></span>
+                <span>STREAK: <strong className="text-secondary">x{me?.streak || 0}</strong></span>
+                <span className="text-border">|</span>
+                <span className="text-primary animate-pulse uppercase">MULTIPLAYER UPLINK ACTIVE</span>
               </div>
             </div>
             
@@ -170,7 +188,7 @@ export default function Investigation() {
                 className="flex items-center gap-3 border border-border px-3 py-1 bg-surface cursor-pointer hover:border-primary group"
                 title="Operative Settings"
               >
-                <span className="font-mono text-[10px] text-white uppercase group-hover:text-primary transition-colors">{sessionState?.playerName || 'OPERATIVE'}</span>
+                <span className="font-mono text-[10px] text-white uppercase group-hover:text-primary transition-colors">{me?.name || 'OPERATIVE'}</span>
                 <span className="material-symbols-outlined text-sm group-hover:text-primary transition-colors">settings</span>
               </div>
             </div>
@@ -327,17 +345,20 @@ export default function Investigation() {
           {/* Bottom Action Bar (Fixed at bottom of main content) */}
           <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-[92%] max-w-5xl bg-surface/95 backdrop-blur-md border border-border shadow-2xl p-4 z-30">
             {isSubmitting && (
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-secondary text-white font-mono text-[9px] font-bold px-4 py-0.5 tracking-widest uppercase shadow-[0_0_10px_rgba(161,0,255,0.8)] animate-pulse">
-                BACKEND EVALUATING DECISION: {selectedAction}...
+              <div className="absolute inset-0 bg-background/90 backdrop-blur-sm z-20 flex flex-col items-center justify-center border border-primary/50 shadow-[0_0_20px_rgba(226,27,35,0.2)]">
+                <span className="material-symbols-outlined text-4xl text-primary animate-spin mb-2">sync</span>
+                <h3 className="font-headline font-bold text-xl text-white uppercase italic tracking-tighter">WAITING FOR SQUAD</h3>
+                <p className="font-mono text-[10px] text-on-surface-muted uppercase tracking-widest mt-1">
+                  AWAITING DECISION SYNCHRONIZATION...
+                </p>
               </div>
             )}
             
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              
               {/* CLEAR Button */}
               <button 
                 onClick={() => handleDecision('CLEAR')}
-                disabled={isSubmitting || isLoadingCase}
+                disabled={isSubmitting}
                 className={`bg-surface-dim hover:bg-white/5 border border-transparent transition-all p-4 text-center disabled:opacity-50 disabled:cursor-not-allowed ${
                   selectedAction === 'CLEAR' && isSubmitting ? 'ring-2 ring-tertiary animate-pulse' : ''
                 }`}
@@ -349,7 +370,7 @@ export default function Investigation() {
               {/* STEP-UP AUTH Button */}
               <button 
                 onClick={() => handleDecision('STEP-UP AUTH')}
-                disabled={isSubmitting || isLoadingCase}
+                disabled={isSubmitting}
                 className={`bg-surface-dim border border-secondary hover:bg-secondary/10 transition-all p-4 text-center disabled:opacity-50 disabled:cursor-not-allowed ${
                   selectedAction === 'STEP-UP AUTH' && isSubmitting ? 'ring-2 ring-secondary animate-pulse' : ''
                 }`}
@@ -361,7 +382,7 @@ export default function Investigation() {
               {/* FREEZE Button */}
               <button 
                 onClick={() => handleDecision('FREEZE')}
-                disabled={isSubmitting || isLoadingCase}
+                disabled={isSubmitting}
                 className={`w-full h-full bg-primary hover:bg-primary/90 transition-all p-4 text-center skew-container shadow-[0_0_20px_rgba(226,27,35,0.3)] disabled:opacity-50 disabled:cursor-not-allowed ${
                   selectedAction === 'FREEZE' && isSubmitting ? 'ring-2 ring-white animate-pulse' : ''
                 }`}
@@ -375,7 +396,7 @@ export default function Investigation() {
               {/* ESCALATE Button */}
               <button 
                 onClick={() => handleDecision('ESCALATE')}
-                disabled={isSubmitting || isLoadingCase}
+                disabled={isSubmitting}
                 className={`bg-primary/5 border border-primary/30 hover:bg-primary/10 transition-all p-4 text-center disabled:opacity-50 disabled:cursor-not-allowed ${
                   selectedAction === 'ESCALATE' && isSubmitting ? 'ring-2 ring-primary animate-pulse' : ''
                 }`}
@@ -390,6 +411,12 @@ export default function Investigation() {
       </div>
 
       <Footer />
+      
+      <AbortModal 
+        isOpen={isAbortModalOpen} 
+        onCancel={() => setIsAbortModalOpen(false)} 
+        onAbort={() => logoutUser(navigate, mp)} 
+      />
     </div>
   );
 }
