@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app/backend
+    environment:
+      - DATABASE_URL=sqlite:///./fraudops.db
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend # To be created by frontend dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./src:/app/src
+      - ./public:/app/public
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    depends_on:
+      - backend
+    # Since there's no Dockerfile.frontend yet, we comment out the build instruction and use a generic image for dev, or just let frontend run locally via npm run dev.
+    # We will leave this commented out to avoid build errors until Abhinandan sets it up.
+    
+    # build: ...
+    # command: npm run dev -- --host
